@@ -6,7 +6,7 @@ The initial use case can be succinctly illustrated as follows: by providing a sc
 written in the following `Polars`-flavoured pseudo-code...
 
 ```text
-column: Utf8
+column: String
 nested: List(
     Struct(
         attr: UInt8
@@ -66,7 +66,7 @@ from polars_unpack import (
 
 # define the schema object
 s = SchemaParser(
-    "column: Utf8 "
+    "column: String "
     "nested: List(Struct(attr: UInt8,attr2=renamed: UInt8)) "
     "missing_from_source: Float32 "
 )

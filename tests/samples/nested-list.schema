@@ -4,7 +4,7 @@ struct_field: Struct(
     list_field: List(
         Struct(
             field1: Int64
-            field2: Utf8
+            field2: String
         )
     )
     different_integer_field: Int64
@@ -14,4 +14,4 @@ struct_field: Struct(
         )
     )
 )
-string_field: Utf8
+string_field: String

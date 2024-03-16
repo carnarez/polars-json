@@ -38,7 +38,7 @@ The requirements are illustrated below (JSON input, plain text schema, `Polars` 
 }
 ```
 ```text
-column: Utf8
+column: String
 nested: List(
     Struct(
         attr: UInt8
@@ -108,13 +108,13 @@ POLARS_DATATYPES: dict[str, pl.DataType] = {
     "uint16": pl.UInt16,
     "uint32": pl.UInt32,
     "uint64": pl.UInt64,
-    "utf8": pl.Utf8,
+    "utf8": pl.String,
     # shorthands
     "float": pl.Float64,
     "real": pl.Float64,
     "int": pl.Int64,
     "integer": pl.Int64,
-    "string": pl.Utf8,
+    "string": pl.String,
 }
 
 
@@ -130,7 +130,7 @@ def infer_schema(path_data: str) -> str:
     to translate into the given `Polars` schema:
 
     ```text
-    attribute: Utf8
+    attribute: String
     nested: Struct(
         foo: Float32
         bar: Int16
@@ -152,6 +152,7 @@ def infer_schema(path_data: str) -> str:
     -------
     : str
         Pretty-printed `Polars` JSON schema.
+
     """
 
     # quick work
@@ -172,6 +173,7 @@ def infer_schema(path_data: str) -> str:
         -------
         : str
             Pretty-printed field name and datatype of the current field.
+
         """
         schema = ""
 
@@ -214,6 +216,7 @@ def parse_schema(path_schema: str) -> pl.Struct:
     -------
     : polars.Struct
         JSON schema translated into `Polars` datatypes.
+
     """
     with pathlib.Path(path_schema).open() as f:
         sp = SchemaParser(f.read())
@@ -242,6 +245,7 @@ def unpack_ndjson(path_schema: str, path_data: str) -> pl.LazyFrame:
     * Fields described in the schema but absent from the JSON source will be added as
       `null` values.
     * Fields present in the JSON source but absent from the schema will be dropped.
+
     """
     s = parse_schema(path_schema)
 
@@ -300,6 +304,7 @@ def unpack_text(
     the use case: the provided schema is always dominant, regardless of the content of
     the JSON file. We do not need to add or remove missing or supplementary columns,
     everything is taken care of by the `json_extract()` method.
+
     """
     s = parse_schema(path_schema)
 
@@ -314,7 +319,7 @@ def unpack_text(
             separator=separator,
             **kwargs,
         )
-        .select(pl.col("raw").str.json_extract(s.struct))
+        .select(pl.col("raw").str.json_decode(s.struct))
         .unnest("raw")
         .json.unpack(s.struct)
         .rename(s.json_paths)
@@ -350,6 +355,7 @@ class SchemaParser:
             JSON schema described in plain text, using `Polars` datatypes.
         struct : polars.Struct
             Plain text schema parsed as a `Polars` `Struct`.
+
         """
         self.source = source
         self.separator = separator
@@ -385,6 +391,7 @@ class SchemaParser:
         * In most cases this method will look for the first occurrence of the string
           that raised the exception; and it might not be the _actual_ line that did so.
         * This method is absolutely useless and could be removed.
+
         """
         # start/end of the issue
         issue_start = self.source.index(unparsed)
@@ -452,6 +459,7 @@ class SchemaParser:
             When a column is encountered more than once in the schema.
         : UnknownDataTypeError
             When an unknown/unsupported datatype is encountered.
+
         """
         # sanity check
         if dtype.lower() not in POLARS_DATATYPES:
@@ -515,6 +523,7 @@ class SchemaParser:
             When a column is encountered more than once in the schema.
         : UnknownDataTypeError
             When an unknown/unsupported datatype is encountered.
+
         """
         # sanity check
         if dtype.lower() not in POLARS_DATATYPES:
@@ -576,6 +585,7 @@ class SchemaParser:
         ------
         : UnknownDataTypeError
             When an unknown/unsupported datatype is encountered.
+
         """
         # sanity check
         if dtype.lower() not in POLARS_DATATYPES:
@@ -616,6 +626,7 @@ class SchemaParser:
         -------
         : polars.Struct
             Updated `Polars` `Struct` including the latest parsed addition.
+
         """
         name, dtype = self.record["parents"].pop()
 
@@ -652,7 +663,7 @@ class SchemaParser:
         We expect something as follows:
 
         ```text
-        attribute: Utf8
+        attribute: String
         nested: Struct(
             foo: Float32
             bar=bax: Int16
@@ -664,7 +675,7 @@ class SchemaParser:
 
         ```python
         polars.Struct([
-            polars.Field("attribute", polars.Utf8),
+            polars.Field("attribute", polars.String),
             polars.Struct([
                 polars.Field("foo", polars.Float32),
                 polars.Field("bar", polars.Int16),
@@ -679,7 +690,7 @@ class SchemaParser:
           name, an equal sign (`=`), a new name for the attribute, a column (`:`) and a
           datatype.
         * `([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute name, a column (`:`)
-          and a datatype; for instance `attribute: Utf8` in the example above.
+          and a datatype; for instance `attribute: String` in the example above.
         * `([A-Za-z0-9]+)` for a lone datatype; for instance the inner content of the
           `List()` in the example above. Keep in mind this datatype could be a complex
           structure as much as a canonical datatype.
@@ -702,6 +713,7 @@ class SchemaParser:
         ------
         : SchemaParsingError
             When unexpected content is encountered and cannot be parsed.
+
         """
         s = self.source
         struct: list[pl.Datatype] = []
@@ -780,6 +792,7 @@ class UnpackFrame:
             `Polars` `DataFrame` or `LazyFrame` object to unpack.
         separator : str
             JSON path separator to use when building the full JSON path.
+
         """
         self._df: pl.DataFrame | pl.LazyFrame = df
         self.separator: str = separator
@@ -815,6 +828,7 @@ class UnpackFrame:
           expected to behave identically.
         * Unpacked columns will be renamed as their full respective JSON paths to avoid
           potential identical names.
+
         """
         # if we are dealing with a nesting column
         if column is not None:

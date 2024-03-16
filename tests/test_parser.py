@@ -34,6 +34,7 @@ def test_datatype(text: str, struct: pl.Struct) -> None:
         Schema in plain text.
     struct : polars.Struct
         Expected datatype.
+
     """
     assert SchemaParser(text).to_struct() == struct
 
@@ -67,6 +68,7 @@ def test_datatype_nested(text: str, struct: pl.Struct) -> None:
         Schema in plain text.
     struct : polars.Struct
         Expected datatype.
+
     """
     assert SchemaParser(text).to_struct() == struct
 
@@ -91,8 +93,8 @@ def test_datatype_nested(text: str, struct: pl.Struct) -> None:
             pl.Struct([pl.Field("", pl.Struct([pl.Field("foo", pl.Int8)]))]),
         ),
         (
-            "Struct(foo: Utf8]",  # mixed!?
-            pl.Struct([pl.Field("", pl.Struct([pl.Field("foo", pl.Utf8)]))]),
+            "Struct(foo: String]",  # mixed!?
+            pl.Struct([pl.Field("", pl.Struct([pl.Field("foo", pl.String)]))]),
         ),
     ],
 )
@@ -105,6 +107,7 @@ def test_delimiter(text: str, struct: pl.Struct) -> None:
         Schema in plain text.
     struct : polars.Struct
         Expected datatype.
+
     """
     assert SchemaParser(text).to_struct() == struct
 
@@ -222,51 +225,51 @@ def test_real_life() -> None:
     ```
     headers: Struct<
         timestamp: Int64
-        source: Utf8
+        source: String
         offset: Int64
     >
     payload: Struct<
-        transaction=transaction_type: Utf8
+        transaction=transaction_type: String
         location: Int64
         customer: Struct{
-            type=customer_type: Utf8
-            identifier=customer_identifier: Utf8
+            type=customer_type: String
+            identifier=customer_identifier: String
         }
         lines: List[
             Struct{
                 product: Int64
-                description=product_description: Utf8
+                description=product_description: String
                 quantity: Int64
                 vatRate=vat_rate: Float64
                 amount: Struct(
                     includingVat=line_amount_including_vat: Float64
                     excludingVat=line_amount_excluding_vat: Float64
                     vat=line_amount_vat: Float64
-                    currency=line_amount_currency: Utf8
+                    currency=line_amount_currency: String
                 )
                 discounts: List[
                     Struct{
                         promotion: Int64
-                        description=promotion_description: Utf8
+                        description=promotion_description: String
                         amount: Struct{
                             includingVat=discount_amount_including_vat: Float64
                             excludingVat=discount_amount_excluding_vat: Float64
                             vat=discount_amount_vat: Float64
-                            currency=discount_amount_currency: Utf8
+                            currency=discount_amount_currency: String
                         }
                     }
                 ]
             }
         ]
         payment: Struct{
-            method: Utf8
-            company: Utf8
+            method: String
+            company: String
             identifier=transaction_identifier: Int64
             amount: Struct{
                 includingVat=total_amount_including_vat: Float32
                 excludingVat=total_amount_excluding_vat: Float32
                 vat=total_amount_vat: Float32
-                currency=total_amount_currency: Utf8
+                currency=total_amount_currency: String
             }
         }
     >
@@ -297,6 +300,7 @@ def test_struct_nested_in_list() -> None:
     It seems `Polars` only accepts input starting with `{`, but not `[` (such as a JSON
     lists); although the schema described above is valid in a JSON sense, the associated
     data will not be ingested by `Polars`.
+
     """
     struct = pl.Struct(
         [pl.List(pl.Struct([pl.Field("foo", pl.Int8), pl.Field("bar", pl.Int8)]))],

@@ -42,6 +42,7 @@ def rect_coordinates(
     -------
     : list[tuple[float, float]]
         List of (x, y) pairs.
+
     """
     return [(float(r.get("x")), float(r.get("y"))) for r in rect]
 
@@ -60,6 +61,7 @@ def rect_dimensions(
     -------
     : list[tuple[float, float]]
         List of (width, height) pairs.
+
     """
     return [(float(r.get("width")), float(r.get("height"))) for r in rect]
 
@@ -76,6 +78,7 @@ def calculate_average_gap(rect: list[xml.etree.ElementTree.Element]) -> float:
     -------
     : float
         Averaged gap size between `rect` objects, as inferred from the bear.
+
     """
     crds: list[tuple[float, float]] = rect_coordinates(rect)
     dims: list[tuple[float, float]] = rect_dimensions(rect)
@@ -112,6 +115,7 @@ def calculate_figure_center(
     Notes
     -----
     We should not need to use the y component of the center down here.
+
     """
     crds: list[tuple[float, float]] = rect_coordinates(rect)
 
@@ -133,6 +137,7 @@ def calculate_unpacked_width(rect: list[xml.etree.ElementTree.Element]) -> float
     -------
     : float
         Total width of the SVG after unpacking the bear.
+
     """
     dims: list[tuple[float, float]] = rect_dimensions(rect)
 
@@ -153,6 +158,7 @@ def animate_svg(
     -------
     : list[xml.etree.ElementTree.ElementTree]
         Updated tree.
+
     """
     root: xml.etree.ElementTree.Element = tree.getroot()
     rect: list[xml.etree.ElementTree.Element] = list(root)
