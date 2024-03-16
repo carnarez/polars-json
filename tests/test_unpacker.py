@@ -34,7 +34,7 @@ def test_datatype() -> None:
     # tested in the other module but might as well...
     assert SchemaParser("Int64").to_struct() == dtype
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(df)
+    assert df.json.unpack(dtype).equals(df)
 
 
 def test_list() -> None:
@@ -57,13 +57,13 @@ def test_list() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: List(Int64)
     ```
     """
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field("json", pl.List(pl.Int64)),
         ],
     )
@@ -76,9 +76,9 @@ def test_list() -> None:
         dtype,
     )
 
-    assert SchemaParser("text:Utf8,json:List(Int64)").to_struct() == dtype
+    assert SchemaParser("text:String,json:List(Int64)").to_struct() == dtype
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(df.explode("json"))
+    assert df.json.unpack(dtype).equals(df.explode("json"))
 
 
 def test_list_nested_in_list_nested_in_list() -> None:
@@ -117,13 +117,13 @@ def test_list_nested_in_list_nested_in_list() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: List(List(List(Int64)))
     ```
     """
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.List(
@@ -146,12 +146,12 @@ def test_list_nested_in_list_nested_in_list() -> None:
         dtype,
     )
 
-    assert SchemaParser("text:Utf8,json:List(List(List(Int64)))").to_struct() == dtype
+    assert SchemaParser("text:String,json:List(List(List(Int64)))").to_struct() == dtype
     assert dtype.to_schema() == df.schema
     assert (
         df.json.unpack(dtype)
         .rename({"json.json.json.json": "json"})
-        .frame_equal(
+        .equals(
             df.explode("json").explode("json").explode("json"),
         )
     )
@@ -181,7 +181,7 @@ def test_list_nested_in_struct() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: Struct(
         foo: Struct(
             fox: Int64,
@@ -193,7 +193,7 @@ def test_list_nested_in_struct() -> None:
     """
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.Struct(
@@ -225,12 +225,12 @@ def test_list_nested_in_struct() -> None:
 
     assert (
         SchemaParser(
-            "text:Utf8,json:Struct(foo:Struct(fox:Int64,foz:Int64),bar:List(Int64))",
+            "text:String,json:Struct(foo:Struct(fox:Int64,foz:Int64),bar:List(Int64))",
         ).to_struct()
         == dtype
     )
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(
+    assert df.json.unpack(dtype).equals(
         df.unnest("json")
         .unnest("foo")
         .explode("bar")
@@ -242,10 +242,12 @@ def test_list_nested_in_struct() -> None:
     ("df"),
     [
         unpack_ndjson(
-            "tests/samples/complex.schema", "tests/samples/complex.ndjson",
+            "tests/samples/complex.schema",
+            "tests/samples/complex.ndjson",
         ).collect(),
         unpack_text(
-            "tests/samples/complex.schema", "tests/samples/complex.ndjson",
+            "tests/samples/complex.schema",
+            "tests/samples/complex.ndjson",
         ).collect(),
     ],
 )
@@ -326,51 +328,51 @@ def test_real_life(df: pl.DataFrame) -> None:
     ```
     headers: Struct<
         timestamp: Int64
-        source: Utf8
+        source: String
         offset: Int64
     >
     payload: Struct<
-        transaction=transaction_type: Utf8
+        transaction=transaction_type: String
         location: Int64
         customer: Struct{
-            type=customer_type: Utf8
-            identifier=customer_identifier: Utf8
+            type=customer_type: String
+            identifier=customer_identifier: String
         }
         lines: List[
             Struct{
                 product: Int64
-                description=product_description: Utf8
+                description=product_description: String
                 quantity: Int64
                 vatRate=vat_rate: Float64
                 amount: Struct(
                     includingVat=line_amount_including_vat: Float64
                     excludingVat=line_amount_excluding_vat: Float64
                     vat=line_amount_vat: Float64
-                    currency=line_amount_currency: Utf8
+                    currency=line_amount_currency: String
                 )
                 discounts: List[
                     Struct{
                         promotion: Int64
-                        description=promotion_description: Utf8
+                        description=promotion_description: String
                         amount: Struct{
                             includingVat=discount_amount_including_vat: Float64
                             excludingVat=discount_amount_excluding_vat: Float64
                             vat=discount_amount_vat: Float64
-                            currency=discount_amount_currency: Utf8
+                            currency=discount_amount_currency: String
                         }
                     }
                 ]
             }
         ]
         payment: Struct{
-            method: Utf8
-            company: Utf8
+            method: String
+            company: String
             identifier=transaction_identifier: Int64
             amount: Struct{
                 includingVat=total_amount_including_vat: Float64
                 excludingVat=total_amount_excluding_vat: Float64
                 vat=total_amount_vat: Float64
-                currency=total_amount_currency: Utf8
+                currency=total_amount_currency: String
             }
         }
     >
@@ -380,43 +382,44 @@ def test_real_life(df: pl.DataFrame) -> None:
     ----------
     df : polars.DataFrame
         Unpacked `Polars` `DataFrame`.
+
     """
     df_csv = pl.scan_csv(
         "tests/samples/complex.csv",
         dtypes={
             "timestamp": pl.Int64,
-            "source": pl.Utf8,
+            "source": pl.String,
             "offset": pl.Int64,
-            "transaction_type": pl.Utf8,
+            "transaction_type": pl.String,
             "location": pl.Int64,
-            "customer_type": pl.Utf8,
-            "customer_identifier": pl.Utf8,
+            "customer_type": pl.String,
+            "customer_identifier": pl.String,
             "product": pl.Int64,
-            "product_description": pl.Utf8,
+            "product_description": pl.String,
             "quantity": pl.Int64,
             "vat_rate": pl.Float64,
             "line_amount_including_vat": pl.Float64,
             "line_amount_excluding_vat": pl.Float64,
             "line_amount_vat": pl.Float64,
-            "line_amount_currency": pl.Utf8,
+            "line_amount_currency": pl.String,
             "promotion": pl.Int64,
-            "promotion_description": pl.Utf8,
+            "promotion_description": pl.String,
             "discount_amount_including_vat": pl.Float64,
             "discount_amount_excluding_vat": pl.Float64,
             "discount_amount_vat": pl.Float64,
-            "discount_amount_currency": pl.Utf8,
-            "method": pl.Utf8,
-            "company": pl.Utf8,
+            "discount_amount_currency": pl.String,
+            "method": pl.String,
+            "company": pl.String,
             "transaction_identifier": pl.Int64,
             "total_amount_including_vat": pl.Float64,
             "total_amount_excluding_vat": pl.Float64,
             "total_amount_vat": pl.Float64,
-            "total_amount_currency": pl.Utf8,
+            "total_amount_currency": pl.String,
         },
     ).collect()
 
     assert df.dtypes == df_csv.dtypes
-    assert df.frame_equal(df_csv)
+    assert df.equals(df_csv)
 
 
 def test_rename_fields() -> None:
@@ -437,7 +440,7 @@ def test_rename_fields() -> None:
     as described by the following schema:
 
     ```
-    text=string: Utf8,
+    text=string: String,
     json: Struct(
         foo=fox: Int64,
         bar=bax: Int64
@@ -457,13 +460,13 @@ def test_rename_fields() -> None:
     ```
     """
     # schema parsing
-    schema = SchemaParser("text=string:Utf8,json:Struct(foo=fox:Int64,bar=bax:Int64)")
+    schema = SchemaParser("text=string:String,json:Struct(foo=fox:Int64,bar=bax:Int64)")
     schema.to_struct()
 
     # original dataframe
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.Struct([pl.Field("foo", pl.Int64), pl.Field("bar", pl.Int64)]),
@@ -482,7 +485,7 @@ def test_rename_fields() -> None:
     # renamed dataframe
     dtype_renamed = pl.Struct(
         [
-            pl.Field("string", pl.Utf8),
+            pl.Field("string", pl.String),
             pl.Field(
                 "json",
                 pl.Struct([pl.Field("fox", pl.Int64), pl.Field("bax", pl.Int64)]),
@@ -501,7 +504,7 @@ def test_rename_fields() -> None:
     assert (
         df.json.unpack(dtype)
         .rename(schema.json_paths)
-        .frame_equal(df_renamed.unnest("json"))
+        .equals(df_renamed.unnest("json"))
     )
 
 
@@ -523,7 +526,7 @@ def test_struct() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: Struct(
         foo: Int64,
         bar: Int64
@@ -532,7 +535,7 @@ def test_struct() -> None:
     """
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.Struct([pl.Field("foo", pl.Int64), pl.Field("bar", pl.Int64)]),
@@ -549,10 +552,11 @@ def test_struct() -> None:
     )
 
     assert (
-        SchemaParser("text:Utf8,json:Struct(foo:Int64,bar:Int64)").to_struct() == dtype
+        SchemaParser("text:String,json:Struct(foo:Int64,bar:Int64)").to_struct()
+        == dtype
     )
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(
+    assert df.json.unpack(dtype).equals(
         df.unnest("json").rename({"foo": "json.foo", "bar": "json.bar"}),
     )
 
@@ -581,7 +585,7 @@ def test_struct_nested_in_list() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: List(
         Struct(
             foo: Int64,
@@ -592,7 +596,7 @@ def test_struct_nested_in_list() -> None:
     """
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.List(
@@ -611,11 +615,11 @@ def test_struct_nested_in_list() -> None:
     )
 
     assert (
-        SchemaParser("text:Utf8,json:List(Struct(foo:Int64,bar:Int64))").to_struct()
+        SchemaParser("text:String,json:List(Struct(foo:Int64,bar:Int64))").to_struct()
         == dtype
     )
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(
+    assert df.json.unpack(dtype).equals(
         df.explode("json")
         .unnest("json")
         .rename({"foo": "json.foo", "bar": "json.bar"}),
@@ -646,7 +650,7 @@ def test_struct_nested_in_struct() -> None:
     as described by the following schema:
 
     ```
-    text: Utf8,
+    text: String,
     json: Struct(
         foo: Struct(
             fox: Int64,
@@ -662,7 +666,7 @@ def test_struct_nested_in_struct() -> None:
     # yup, this is why we want this to be generated
     dtype = pl.Struct(
         [
-            pl.Field("text", pl.Utf8),
+            pl.Field("text", pl.String),
             pl.Field(
                 "json",
                 pl.Struct(
@@ -699,13 +703,13 @@ def test_struct_nested_in_struct() -> None:
 
     assert (
         SchemaParser(
-            "text:Utf8,"
+            "text:String,"
             "json:Struct(foo:Struct(fox:Int64,foz:Int64),bar:Struct(bax:Int64,baz:Int64))",
         ).to_struct()
         == dtype
     )
     assert dtype.to_schema() == df.schema
-    assert df.json.unpack(dtype).frame_equal(
+    assert df.json.unpack(dtype).equals(
         df.unnest("json")
         .unnest("foo", "bar")
         .rename(

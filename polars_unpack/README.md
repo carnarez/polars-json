@@ -41,7 +41,7 @@ The requirements are illustrated below (JSON input, plain text schema, `Polars` 
 ```
 
 ```text
-column: Utf8
+column: String
 nested: List(
     Struct(
         attr: UInt8
@@ -136,7 +136,7 @@ We expect the following example JSON:
 to translate into the given `Polars` schema:
 
 ```text
-attribute: Utf8
+attribute: String
 nested: Struct(
     foo: Float32
     bar: Int16
@@ -423,7 +423,7 @@ Parse the plain text schema into a `Polars` `Struct`.
 We expect something as follows:
 
 ```text
-attribute: Utf8
+attribute: String
 nested: Struct(
     foo: Float32
     bar=bax: Int16
@@ -435,7 +435,7 @@ to translate into a `Polars` native `Struct` object:
 
 ```python
 polars.Struct([
-    polars.Field("attribute", polars.Utf8),
+    polars.Field("attribute", polars.String),
     polars.Struct([
         polars.Field("foo", polars.Float32),
         polars.Field("bar", polars.Int16),
@@ -449,7 +449,7 @@ The following patterns (recognised via regular expressions) are supported:
 - `([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute name, an
   equal sign (`=`), a new name for the attribute, a column (`:`) and a datatype.
 - `([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute name, a column (`:`) and a
-  datatype; for instance `attribute: Utf8` in the example above.
+  datatype; for instance `attribute: String` in the example above.
 - `([A-Za-z0-9]+)` for a lone datatype; for instance the inner content of the `List()`
   in the example above. Keep in mind this datatype could be a complex structure as much
   as a canonical datatype.

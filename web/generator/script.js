@@ -89,7 +89,7 @@ const guessPolarsType = (value, type) => {
     } else if (type === "number") {
         polarsType = Number.isInteger(value) ? "Int64" : "Float64";
     } else if (type === "string") {
-        polarsType = "Utf8";
+        polarsType = "String";
     }
 
     return polarsType;

@@ -1,3 +1,3 @@
 float_field: Float32
-string_field: Utf8
+string_field: String
 integer_field: Int16

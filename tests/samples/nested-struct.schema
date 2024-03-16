@@ -3,8 +3,8 @@ integer_field: Int16
 struct_field: Struct(
     nested_struct_field: Struct(
         field1: Int64
-        field2: Utf8
+        field2: String
     )
     different_integer_field: Int32
 )
-string_field: Utf8
+string_field: String

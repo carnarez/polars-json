@@ -200,51 +200,51 @@ as described by the following schema:
 ```
 headers: Struct<
     timestamp: Int64
-    source: Utf8
+    source: String
     offset: Int64
 >
 payload: Struct<
-    transaction=transaction_type: Utf8
+    transaction=transaction_type: String
     location: Int64
     customer: Struct{
-        type=customer_type: Utf8
-        identifier=customer_identifier: Utf8
+        type=customer_type: String
+        identifier=customer_identifier: String
     }
     lines: List[
         Struct{
             product: Int64
-            description=product_description: Utf8
+            description=product_description: String
             quantity: Int64
             vatRate=vat_rate: Float64
             amount: Struct(
                 includingVat=line_amount_including_vat: Float64
                 excludingVat=line_amount_excluding_vat: Float64
                 vat=line_amount_vat: Float64
-                currency=line_amount_currency: Utf8
+                currency=line_amount_currency: String
             )
             discounts: List[
                 Struct{
                     promotion: Int64
-                    description=promotion_description: Utf8
+                    description=promotion_description: String
                     amount: Struct{
                         includingVat=discount_amount_including_vat: Float64
                         excludingVat=discount_amount_excluding_vat: Float64
                         vat=discount_amount_vat: Float64
-                        currency=discount_amount_currency: Utf8
+                        currency=discount_amount_currency: String
                     }
                 }
             ]
         }
     ]
     payment: Struct{
-        method: Utf8
-        company: Utf8
+        method: String
+        company: String
         identifier=transaction_identifier: Int64
         amount: Struct{
             includingVat=total_amount_including_vat: Float32
             excludingVat=total_amount_excluding_vat: Float32
             vat=total_amount_vat: Float32
-            currency=total_amount_currency: Utf8
+            currency=total_amount_currency: String
         }
     }
 >
@@ -396,7 +396,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: List(Int64)
 ```
 
@@ -441,7 +441,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: List(List(List(Int64)))
 ```
 
@@ -474,7 +474,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: Struct(
     foo: Struct(
         fox: Int64,
@@ -566,51 +566,51 @@ as described by the following schema:
 ```
 headers: Struct<
     timestamp: Int64
-    source: Utf8
+    source: String
     offset: Int64
 >
 payload: Struct<
-    transaction=transaction_type: Utf8
+    transaction=transaction_type: String
     location: Int64
     customer: Struct{
-        type=customer_type: Utf8
-        identifier=customer_identifier: Utf8
+        type=customer_type: String
+        identifier=customer_identifier: String
     }
     lines: List[
         Struct{
             product: Int64
-            description=product_description: Utf8
+            description=product_description: String
             quantity: Int64
             vatRate=vat_rate: Float64
             amount: Struct(
                 includingVat=line_amount_including_vat: Float64
                 excludingVat=line_amount_excluding_vat: Float64
                 vat=line_amount_vat: Float64
-                currency=line_amount_currency: Utf8
+                currency=line_amount_currency: String
             )
             discounts: List[
                 Struct{
                     promotion: Int64
-                    description=promotion_description: Utf8
+                    description=promotion_description: String
                     amount: Struct{
                         includingVat=discount_amount_including_vat: Float64
                         excludingVat=discount_amount_excluding_vat: Float64
                         vat=discount_amount_vat: Float64
-                        currency=discount_amount_currency: Utf8
+                        currency=discount_amount_currency: String
                     }
                 }
             ]
         }
     ]
     payment: Struct{
-        method: Utf8
-        company: Utf8
+        method: String
+        company: String
         identifier=transaction_identifier: Int64
         amount: Struct{
             includingVat=total_amount_including_vat: Float64
             excludingVat=total_amount_excluding_vat: Float64
             vat=total_amount_vat: Float64
-            currency=total_amount_currency: Utf8
+            currency=total_amount_currency: String
         }
     }
 >
@@ -645,7 +645,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text=string: Utf8,
+text=string: String,
 json: Struct(
     foo=fox: Int64,
     bar=bax: Int64
@@ -687,7 +687,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: Struct(
     foo: Int64,
     bar: Int64
@@ -723,7 +723,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: List(
     Struct(
         foo: Int64,
@@ -761,7 +761,7 @@ Test the following nested JSON content:
 as described by the following schema:
 
 ```
-text: Utf8,
+text: String,
 json: Struct(
     foo: Struct(
         fox: Int64,
