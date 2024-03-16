@@ -1,0 +1,1297 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>polars-unpack</title><meta name=title content=polars-unpack><meta name=description content="Automated, schema-based JSON unpacking to Polars objects."><meta property=article:author content=carnarez><meta property=article:published_time content=2024-03-16><meta property=og:type content=article><meta property=og:url content=https://carnarez.github.io/polars-unpack><meta property=og:title content=polars-unpack><meta property=og:description content="Automated, schema-based JSON unpacking to Polars objects."><meta property=og:image content=https://source.unsplash.com/1600x900/?forest><link rel=canonical href=https://carnarez.github.io/polars-unpack><link rel=icon href=# type=image/png><link rel=stylesheet href=https://carnarez.github.io/polars-unpack/style.css><link rel=stylesheet href=style.css><script>function setTheme(e){localStorage.setItem("theme",e),document.documentElement.className=e}function toggleTheme(){"light"===localStorage.getItem("theme")?setTheme("dark"):"dark"===localStorage.getItem("theme")?setTheme("dimmed"):setTheme("light")}"dark"===localStorage.getItem("theme")||!("theme"in localStorage)&&window.matchMedia("(prefers-color-scheme: dark)").matches?setTheme("dark"):"dimmed"===localStorage.getItem("theme")?setTheme("dimmed"):setTheme("light")</script><script>var timer;window.addEventListener("scroll",()=>{const e=document.querySelector("#scroller"),o=document.querySelector("#topbar"),r=document.querySelector("#toc"),i=document.querySelector("article");var t,l;0<e.getBoundingClientRect().top?(e.style.width="0",document.querySelectorAll("aside, article").forEach(e=>{var t=e.className.match(/visible-sidebar/)||"";0<t.length&&e.classList.remove(t)}),r.scrollTop=0):(t=window.scrollY,l=o.offsetHeight+i.offsetHeight-window.innerHeight,e.style.width=100*Math.min(t/l,1)+"%",null!==timer&&clearTimeout(timer),timer=setTimeout(()=>{var t=i.querySelectorAll("h1, h2, h3, h4, h5, h6");for(let e=0;e<t.length;e++)if(0<t[e].getBoundingClientRect().top-parseInt(getComputedStyle(document.documentElement).scrollMarginTop)-1){0===e?history.pushState({},"",window.location.pathname):history.pushState({},"","#"+t[e-1].id);break}r.querySelectorAll("a").forEach(e=>{var t=e.getAttribute("href");t.startsWith("#")&&(t===window.location.hash?(e.classList.add("active"),(e.offsetTop<r.scrollTop+o.offsetHeight||e.offsetTop>window.innerHeight-o.offsetHeight)&&(r.scrollTop=e.offsetTop-2*o.offsetHeight)):e.classList.remove("active"))})},150))}),window.onload=()=>{const r=document.querySelector("#topbar"),i=document.querySelector("#toc"),e=i.querySelectorAll("a"),l=window.location.pathname.replace(/^[/]|[/]$/g,""),t=window.location.hash,c=(e.forEach(e=>{e.setAttribute("onclick","toggleSidebar('#toc')")}),[]),o=[];e.forEach(e=>{(e.getAttribute("href").startsWith("#")?o:c).push(e)}),c.forEach((e,t)=>{var o;e.getAttribute("href").replace(/^[/]|[/]$/g,"")===l&&(e.classList.add("active"),(e.offsetTop<i.scrollTop+r.offsetHeight||e.offsetTop>window.innerHeight-r.offsetHeight)&&(i.scrollTop=e.offsetTop-2*r.offsetHeight),0<t&&(e=c[t-1],o=document.querySelector("#prev"),localStorage.setItem("prev-content",e.href),o.href=e.href,o.text=e.text),t<c.length-1)&&(o=c[t+1],e=document.querySelector("#next"),localStorage.setItem("next-content",o.href),e.href=o.href,e.text=o.text)}),o.forEach(e=>{e.getAttribute("href")===t?(e.classList.add("active"),(e.offsetTop<i.scrollTop+r.offsetHeight||e.offsetTop>window.innerHeight-r.offsetHeight)&&(i.scrollTop=e.offsetTop-2*r.offsetHeight)):e.classList.remove("active")})}</script><script>window.addEventListener("keyup",e=>{var t=document.querySelector("#scroller"),o=e.key;0===t.getBoundingClientRect().top&&"BODY"===e.srcElement.tagName&&("<"===o?window.location.href=localStorage.getItem("prev-content")||"":">"===o?window.location.href=localStorage.getItem("next-content")||"":"."===o?toggleSidebar("#toc"):"?"===o&&toggleSidebar("#search")),"INPUT"===e.srcElement.tagName&&"Escape"===o&&e.srcElement.blur()})</script><script>function toggleSidebar(e,s=void 0){var i=document.querySelector("#scroller"),o=document.querySelector("aside"+e),e=document.querySelector(`aside:not(${e})`),l=document.querySelector("article");0<i.offsetTop&&window.scroll(0,i.offsetTop),e.classList.contains("visible-sidebar")&&(e.classList.remove("visible-sidebar"),l.classList.remove("visible-sidebar")),o.classList.contains("visible-sidebar")?(o.classList.remove("visible-sidebar"),l.classList.remove("visible-sidebar"),s=void 0):(o.classList.add("visible-sidebar"),l.classList.add("visible-sidebar")),void 0!==s?document.querySelector(s).focus():document.activeElement.blur()}</script><script>function lunrSearch(){fetch("https://carnarez.github.io/polars-unpack/index.json").then(e=>e.json()).then(e=>{const t=e.documents,a=lunr.Index.load(e.indexed),o=[],r=document.querySelector("#search-input").value,c=document.querySelector("#search-output");2<r.length?(c.innerHTML=`<li>No results for "<i>${r}</i>" in current corpus.</li>`,a.search(r).forEach(r=>{const e=t[r.ref][0],c=t[r.ref][1],n=t[r.ref][2],s=parseFloat(r.score).toFixed(3);let l="";l=""===e?""!==c?"":"/":(""!==c?e+"/":e).replaceAll("/"," &gt; "),Object.keys(r.matchData.metadata).forEach(e=>{r.matchData.metadata[e].text.position.forEach(e=>{var t=document.createElement("li"),a=parseInt(e[0]),e=parseInt(e[1]);t.innerHTML=`
+                      <a class="search-result" href="https://carnarez.github.io/polars-unpack/${r.ref}" onclick="toggleSidebar('#search')">
+                        <div class="title">${l}${c}</div>
+                        <div class="text">
+                          ${n.slice(Math.max(0,a-100),a)}
+                          <mark>${n.slice(a,a+e)}</mark>
+                          ${n.slice(a+e,Math.min(a+e+100,n.length))}
+                          <span class="score">${s}</span>
+                        </div>
+                      </a>
+                    `,o.push(t)})})}),0<o.length&&c.replaceChildren(...o)):c.replaceChildren()})}function resetSearch(){var e=document.querySelector("#search-input"),t=document.querySelector("#search-output");e.value="",e.focus(),t.replaceChildren()}</script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js onload=hljs.highlightAll()></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script><nav id=topbar><div><a class=sidebar onclick='toggleSidebar("#toc")'></a> <a class=search onclick='toggleSidebar("#search","#search-input")'></a> <span class=spacer></span> <a class=logo href=https://carnarez.github.io/polars-unpack><img src=""></a><span class=spacer></span> <a class=repo href=https://github.com/carnarez/polars-unpack></a> <a class=theme onclick=toggleTheme()></a></div></nav><nav id=scroller></nav><main><aside id=toc><div class=toc><ul><li><a href=/polars-unpack/ >Home</a><li><a href=/polars-unpack/generator>Schema generator</a><li><a href=/polars-unpack/api>API</a><li><a href=/polars-unpack/tests>Tests</a><ul><li><a href=#module-test_parser>Module test_parser</a><ul><li><a href=#functions>Functions</a><ul><li><a href=#test_parsertest_datatype>test_parser.test_datatype</a><li><a href=#test_parsertest_datatype_nested>test_parser.test_datatype_nested</a><li><a href=#test_parsertest_delimiter>test_parser.test_delimiter</a><li><a href=#test_parsertest_list_nested_in_list>test_parser.test_list_nested_in_list</a><li><a href=#test_parsertest_list_nested_in_struct>test_parser.test_list_nested_in_struct</a><li><a href=#test_parsertest_pretty_printing>test_parser.test_pretty_printing</a><li><a href=#test_parsertest_real_life>test_parser.test_real_life</a><li><a href=#test_parsertest_struct_nested_in_list>test_parser.test_struct_nested_in_list</a><li><a href=#test_parsertest_struct_nested_in_struct>test_parser.test_struct_nested_in_struct</a><li><a href=#test_parsertest_unexpected_duplication>test_parser.test_unexpected_duplication</a><li><a href=#test_parsertest_unexpected_renaming>test_parser.test_unexpected_renaming</a><li><a href=#test_parsertest_unexpected_syntax>test_parser.test_unexpected_syntax</a><li><a href=#test_parsertest_unknown_datatype>test_parser.test_unknown_datatype</a></ul></ul><li><a href=#module-test_unpacker>Module test_unpacker</a><ul><li><a href=#functions_1>Functions</a><ul><li><a href=#test_unpackertest_datatype>test_unpacker.test_datatype</a><li><a href=#test_unpackertest_list>test_unpacker.test_list</a><li><a href=#test_unpackertest_list_nested_in_list_nested_in_list>test_unpacker.test_list_nested_in_list_nested_in_list</a><li><a href=#test_unpackertest_list_nested_in_struct>test_unpacker.test_list_nested_in_struct</a><li><a href=#test_unpackertest_real_life>test_unpacker.test_real_life</a><li><a href=#test_unpackertest_rename_fields>test_unpacker.test_rename_fields</a><li><a href=#test_unpackertest_struct>test_unpacker.test_struct</a><li><a href=#test_unpackertest_struct_nested_in_list>test_unpacker.test_struct_nested_in_list</a><li><a href=#test_unpackertest_struct_nested_in_struct>test_unpacker.test_struct_nested_in_struct</a></ul></ul></ul></ul></div></aside><aside id=search><header><a class=search onclick='document.querySelector("#search-input").focus()'></a> <input autocomplete=off id=search-input onkeyup=lunrSearch() placeholder="search with lunr"> <a class=reset onclick=resetSearch()></a></header><ul id=search-output></ul></aside><article><div><h1 id=module-test_parser>Module <code>test_parser</code></h1><p>Assert capabilities of the schema parser.<p><strong>Functions</strong><ul><li><a href=#test_parsertest_datatype><code>test_datatype()</code></a>: Test all supported standalone non-nesting datatypes and associated shorthands.<li><a href=#test_parsertest_datatype_nested><code>test_datatype_nested()</code></a>: Test nesting datatypes.<li><a href=#test_parsertest_delimiter><code>test_delimiter()</code></a>: Test nested structure delimiters: <code>()</code>, <code>[]</code>, <code>{}</code> or <code>&lt;&gt;</code>.<li><a href=#test_parsertest_list_nested_in_list><code>test_list_nested_in_list()</code></a>: Test the parsing of a <code>polars.List</code> within a <code>polars.List</code>.<li><a href=#test_parsertest_list_nested_in_struct><code>test_list_nested_in_struct()</code></a>: Test the parsing of a <code>polars.List</code> within a <code>polars.Struct</code>.<li><a href=#test_parsertest_pretty_printing><code>test_pretty_printing()</code></a>: Test whether an inferred schema is correctly printed.<li><a href=#test_parsertest_real_life><code>test_real_life()</code></a>: Test complex schema.<li><a href=#test_parsertest_struct_nested_in_list><code>test_struct_nested_in_list()</code></a>: Test the parsing of a <code>polars.Struct</code> within a <code>polars.List</code>.<li><a href=#test_parsertest_struct_nested_in_struct><code>test_struct_nested_in_struct()</code></a>: Test the parsing of a <code>polars.Struct</code> within a <code>polars.Struct</code>.<li><a href=#test_parsertest_unexpected_duplication><code>test_unexpected_duplication()</code></a>: Test for duplicated column name (including after column renaming).<li><a href=#test_parsertest_unexpected_renaming><code>test_unexpected_renaming()</code></a>: Test for JSON path renaming (unsupported, and quite useless as well).<li><a href=#test_parsertest_unexpected_syntax><code>test_unexpected_syntax()</code></a>: Test for failure to parse the schema due to unknown/unexpected syntax.<li><a href=#test_parsertest_unknown_datatype><code>test_unknown_datatype()</code></a>: Test for unknown datatype.</ul><h2 id=functions>Functions</h2><h3 id=test_parsertest_datatype><code>test_parser.test_datatype</code></h3><pre class=highlight><code class=language-python>test_datatype(text: str, struct: pl.Struct) -&gt; None:</code></pre><p>Test all supported standalone non-nesting datatypes and associated shorthands.<p><strong>Parameters</strong><ul><li><code>text</code> [<code>str</code>]: Schema in plain text.<li><code>struct</code> [<code>polars.Struct</code>]: Expected datatype.</ul><p><strong>Decoration</strong> via <code>@pytest.mark.parametrize()</code>.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_datatype(text: str, struct: pl.Struct) -&gt; None:
+    """Test all supported standalone non-nesting datatypes and associated shorthands.
+
+    Parameters
+    ----------
+    text : str
+        Schema in plain text.
+    struct : polars.Struct
+        Expected datatype.
+
+    """
+    assert SchemaParser(text).to_struct() == struct</code></pre></details><h3 id=test_parsertest_datatype_nested><code>test_parser.test_datatype_nested</code></h3><pre class=highlight><code class=language-python>test_datatype_nested(text: str, struct: pl.Struct) -&gt; None:</code></pre><p>Test nesting datatypes.<p><strong>Parameters</strong><ul><li><code>text</code> [<code>str</code>]: Schema in plain text.<li><code>struct</code> [<code>polars.Struct</code>]: Expected datatype.</ul><p><strong>Decoration</strong> via <code>@pytest.mark.parametrize()</code>.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_datatype_nested(text: str, struct: pl.Struct) -&gt; None:
+    """Test nesting datatypes.
+
+    Parameters
+    ----------
+    text : str
+        Schema in plain text.
+    struct : polars.Struct
+        Expected datatype.
+
+    """
+    assert SchemaParser(text).to_struct() == struct</code></pre></details><h3 id=test_parsertest_delimiter><code>test_parser.test_delimiter</code></h3><pre class=highlight><code class=language-python>test_delimiter(text: str, struct: pl.Struct) -&gt; None:</code></pre><p>Test nested structure delimiters: <code>()</code>, <code>[]</code>, <code>{}</code> or <code>&lt;&gt;</code>.<p><strong>Parameters</strong><ul><li><code>text</code> [<code>str</code>]: Schema in plain text.<li><code>struct</code> [<code>polars.Struct</code>]: Expected datatype.</ul><p><strong>Decoration</strong> via <code>@pytest.mark.parametrize()</code>.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_delimiter(text: str, struct: pl.Struct) -&gt; None:
+    """Test nested structure delimiters: `()`, `[]`, `{}` or `&lt;&gt;`.
+
+    Parameters
+    ----------
+    text : str
+        Schema in plain text.
+    struct : polars.Struct
+        Expected datatype.
+
+    """
+    assert SchemaParser(text).to_struct() == struct</code></pre></details><h3 id=test_parsertest_list_nested_in_list><code>test_parser.test_list_nested_in_list</code></h3><pre class=highlight><code class=language-python>test_list_nested_in_list() -&gt; None:</code></pre><p>Test the parsing of a <code>polars.List</code> within a <code>polars.List</code>.<p>Test the generation of the following schema:<pre class=highlight><code>List(List(Int8))</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_list_nested_in_list() -&gt; None:
+    """Test the parsing of a `polars.List` within a `polars.List`.
+
+    Test the generation of the following schema:
+
+    ```
+    List(List(Int8))
+    ```
+    """
+    struct = pl.Struct([pl.List(pl.List(pl.Int8))])
+
+    assert SchemaParser("List(List(Int8))").to_struct() == struct</code></pre></details><h3 id=test_parsertest_list_nested_in_struct><code>test_parser.test_list_nested_in_struct</code></h3><pre class=highlight><code class=language-python>test_list_nested_in_struct() -&gt; None:</code></pre><p>Test the parsing of a <code>polars.List</code> within a <code>polars.Struct</code>.<p>Test the generation of the following schema:<pre class=highlight><code>Struct(
+    foo: List(Int8)
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_list_nested_in_struct() -&gt; None:
+    """Test the parsing of a `polars.List` within a `polars.Struct`.
+
+    Test the generation of the following schema:
+
+    ```
+    Struct(
+        foo: List(Int8)
+    )
+    ```
+    """
+    struct = pl.Struct([pl.Field("", pl.Struct([pl.Field("foo", pl.List(pl.Int8))]))])
+
+    assert SchemaParser("Struct(foo: List(Int8))").to_struct() == struct</code></pre></details><h3 id=test_parsertest_pretty_printing><code>test_parser.test_pretty_printing</code></h3><pre class=highlight><code class=language-python>test_pretty_printing() -&gt; None:</code></pre><p>Test whether an inferred schema is correctly printed.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_pretty_printing() -&gt; None:
+    """Test whether an inferred schema is correctly printed."""
+    with pathlib.Path("tests/samples/nested-list.schema").open() as f:
+        assert infer_schema("tests/samples/nested-list.ndjson") == f.read().strip()</code></pre></details><h3 id=test_parsertest_real_life><code>test_parser.test_real_life</code></h3><pre class=highlight><code class=language-python>test_real_life() -&gt; None:</code></pre><p>Test complex schema.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "headers": {
+        "timestamp": 1372182309,
+        "source": "Online.Transactions",
+        "offset": 123456789
+    },
+    "payload": {
+        "transaction": "inbound",
+        "location": 765,
+        "customer": {
+            "type": "REGISTERED",
+            "identifier": "a8098c1a-f86e-11da-bd1a-00112444be1e"
+        },
+        "lines": [
+            {
+                "product": 76543,
+                "description": "Toilet plunger",
+                "quantity": 2,
+                "vatRate": 0.21,
+                "amount": {
+                    "includingVat": 10.0,
+                    "excludingVat": 8.26,
+                    "vat": 1.74,
+                    "currency": "EUR"
+                },
+                "discounts": [
+                    {
+                        "promotion": 100023456000789,
+                        "description": "Buy one get two",
+                        "amount": {
+                            "includingVat": 10.0,
+                            "excludingVat": 8.26,
+                            "vat": 1.74,
+                            "currency": "EUR"
+                        }
+                    }
+                ]
+            },
+            {
+                "product": 3456,
+                "description": "Toilet cap",
+                "quantity": 1,
+                "vatRate": 0.21,
+                "amount": {
+                    "includingVat": 30.0,
+                    "excludingVat": 24.79,
+                    "vat": 5.21,
+                    "currency": "EUR"
+                }
+            }
+        ],
+        "payment": {
+            "method": "Card",
+            "company": "OnlineBanking",
+            "identifier": 123456789,
+            "amount": {
+                "includingVat": 40.0,
+                "excludingVat": 33.05,
+                "vat": 6.95,
+                "currency": "EUR"
+            }
+        }
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>headers: Struct&lt;
+    timestamp: Int64
+    source: String
+    offset: Int64
+&gt;
+payload: Struct&lt;
+    transaction=transaction_type: String
+    location: Int64
+    customer: Struct{
+        type=customer_type: String
+        identifier=customer_identifier: String
+    }
+    lines: List[
+        Struct{
+            product: Int64
+            description=product_description: String
+            quantity: Int64
+            vatRate=vat_rate: Float64
+            amount: Struct(
+                includingVat=line_amount_including_vat: Float64
+                excludingVat=line_amount_excluding_vat: Float64
+                vat=line_amount_vat: Float64
+                currency=line_amount_currency: String
+            )
+            discounts: List[
+                Struct{
+                    promotion: Int64
+                    description=promotion_description: String
+                    amount: Struct{
+                        includingVat=discount_amount_including_vat: Float64
+                        excludingVat=discount_amount_excluding_vat: Float64
+                        vat=discount_amount_vat: Float64
+                        currency=discount_amount_currency: String
+                    }
+                }
+            ]
+        }
+    ]
+    payment: Struct{
+        method: String
+        company: String
+        identifier=transaction_identifier: Int64
+        amount: Struct{
+            includingVat=total_amount_including_vat: Float32
+            excludingVat=total_amount_excluding_vat: Float32
+            vat=total_amount_vat: Float32
+            currency=total_amount_currency: String
+        }
+    }
+&gt;</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_real_life() -&gt; None:
+    """Test complex schema.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "headers": {
+            "timestamp": 1372182309,
+            "source": "Online.Transactions",
+            "offset": 123456789
+        },
+        "payload": {
+            "transaction": "inbound",
+            "location": 765,
+            "customer": {
+                "type": "REGISTERED",
+                "identifier": "a8098c1a-f86e-11da-bd1a-00112444be1e"
+            },
+            "lines": [
+                {
+                    "product": 76543,
+                    "description": "Toilet plunger",
+                    "quantity": 2,
+                    "vatRate": 0.21,
+                    "amount": {
+                        "includingVat": 10.0,
+                        "excludingVat": 8.26,
+                        "vat": 1.74,
+                        "currency": "EUR"
+                    },
+                    "discounts": [
+                        {
+                            "promotion": 100023456000789,
+                            "description": "Buy one get two",
+                            "amount": {
+                                "includingVat": 10.0,
+                                "excludingVat": 8.26,
+                                "vat": 1.74,
+                                "currency": "EUR"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "product": 3456,
+                    "description": "Toilet cap",
+                    "quantity": 1,
+                    "vatRate": 0.21,
+                    "amount": {
+                        "includingVat": 30.0,
+                        "excludingVat": 24.79,
+                        "vat": 5.21,
+                        "currency": "EUR"
+                    }
+                }
+            ],
+            "payment": {
+                "method": "Card",
+                "company": "OnlineBanking",
+                "identifier": 123456789,
+                "amount": {
+                    "includingVat": 40.0,
+                    "excludingVat": 33.05,
+                    "vat": 6.95,
+                    "currency": "EUR"
+                }
+            }
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    headers: Struct&lt;
+        timestamp: Int64
+        source: String
+        offset: Int64
+    &gt;
+    payload: Struct&lt;
+        transaction=transaction_type: String
+        location: Int64
+        customer: Struct{
+            type=customer_type: String
+            identifier=customer_identifier: String
+        }
+        lines: List[
+            Struct{
+                product: Int64
+                description=product_description: String
+                quantity: Int64
+                vatRate=vat_rate: Float64
+                amount: Struct(
+                    includingVat=line_amount_including_vat: Float64
+                    excludingVat=line_amount_excluding_vat: Float64
+                    vat=line_amount_vat: Float64
+                    currency=line_amount_currency: String
+                )
+                discounts: List[
+                    Struct{
+                        promotion: Int64
+                        description=promotion_description: String
+                        amount: Struct{
+                            includingVat=discount_amount_including_vat: Float64
+                            excludingVat=discount_amount_excluding_vat: Float64
+                            vat=discount_amount_vat: Float64
+                            currency=discount_amount_currency: String
+                        }
+                    }
+                ]
+            }
+        ]
+        payment: Struct{
+            method: String
+            company: String
+            identifier=transaction_identifier: Int64
+            amount: Struct{
+                includingVat=total_amount_including_vat: Float32
+                excludingVat=total_amount_excluding_vat: Float32
+                vat=total_amount_vat: Float32
+                currency=total_amount_currency: String
+            }
+        }
+    &gt;
+    ```
+    """
+    dtype = parse_schema("tests/samples/complex.schema").struct
+    df = pl.scan_ndjson("tests/samples/complex.ndjson").collect()
+
+    assert dtype.to_schema() == df.schema</code></pre></details><h3 id=test_parsertest_struct_nested_in_list><code>test_parser.test_struct_nested_in_list</code></h3><pre class=highlight><code class=language-python>test_struct_nested_in_list() -&gt; None:</code></pre><p>Test the parsing of a <code>polars.Struct</code> within a <code>polars.List</code>.<p>Test the generation of the following schema:<pre class=highlight><code>List(
+    Struct(
+        foo: Int8,
+        bar: Int8
+    )
+)</code></pre><p><strong>Notes</strong><p>It seems <code>Polars</code> only accepts input starting with <code>{</code>, but not <code>[</code> (such as a JSON lists); although the schema described above is valid in a JSON sense, the associated data will not be ingested by <code>Polars</code>.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_struct_nested_in_list() -&gt; None:
+    """Test the parsing of a `polars.Struct` within a `polars.List`.
+
+    Test the generation of the following schema:
+
+    ```
+    List(
+        Struct(
+            foo: Int8,
+            bar: Int8
+        )
+    )
+    ```
+
+    Notes
+    -----
+    It seems `Polars` only accepts input starting with `{`, but not `[` (such as a JSON
+    lists); although the schema described above is valid in a JSON sense, the associated
+    data will not be ingested by `Polars`.
+
+    """
+    struct = pl.Struct(
+        [pl.List(pl.Struct([pl.Field("foo", pl.Int8), pl.Field("bar", pl.Int8)]))],
+    )
+
+    assert SchemaParser("List(Struct(foo: Int8, bar: Int8))").to_struct() == struct</code></pre></details><h3 id=test_parsertest_struct_nested_in_struct><code>test_parser.test_struct_nested_in_struct</code></h3><pre class=highlight><code class=language-python>test_struct_nested_in_struct() -&gt; None:</code></pre><p>Test the parsing of a <code>polars.Struct</code> within a <code>polars.Struct</code>.<p>Test the generation of the following schema:<pre class=highlight><code>Struct(
+    foo: Struct(
+        bar: Int8
+    )
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_struct_nested_in_struct() -&gt; None:
+    """Test the parsing of a `polars.Struct` within a `polars.Struct`.
+
+    Test the generation of the following schema:
+
+    ```
+    Struct(
+        foo: Struct(
+            bar: Int8
+        )
+    )
+    ```
+    """
+    struct = pl.Struct(
+        [
+            pl.Field(
+                "",
+                pl.Struct([pl.Field("foo", pl.Struct([pl.Field("bar", pl.Int8)]))]),
+            ),
+        ],
+    )
+
+    assert SchemaParser("Struct(foo: Struct(bar: Int8))").to_struct() == struct</code></pre></details><h3 id=test_parsertest_unexpected_duplication><code>test_parser.test_unexpected_duplication</code></h3><pre class=highlight><code class=language-python>test_unexpected_duplication() -&gt; None:</code></pre><p>Test for duplicated column name (including after column renaming).<details><summary>source</summary><pre class=highlight><code class=language-python>def test_unexpected_duplication() -&gt; None:
+    """Test for duplicated column name (including after column renaming)."""
+    with pytest.raises(DuplicateColumnError):
+        SchemaParser("Struct(foo: Int8, foo: Float32)").to_struct()
+    with pytest.raises(DuplicateColumnError):
+        SchemaParser("Struct(foo: Int8, bar=foo: Float32)").to_struct()</code></pre></details><h3 id=test_parsertest_unexpected_renaming><code>test_parser.test_unexpected_renaming</code></h3><pre class=highlight><code class=language-python>test_unexpected_renaming() -&gt; None:</code></pre><p>Test for JSON path renaming (unsupported, and quite useless as well).<details><summary>source</summary><pre class=highlight><code class=language-python>def test_unexpected_renaming() -&gt; None:
+    """Test for JSON path renaming (unsupported, and quite useless as well)."""
+    with pytest.raises(PathRenamingError):
+        SchemaParser("this=that:Struct(foo:Int8)").to_struct()</code></pre></details><h3 id=test_parsertest_unexpected_syntax><code>test_parser.test_unexpected_syntax</code></h3><pre class=highlight><code class=language-python>test_unexpected_syntax() -&gt; None:</code></pre><p>Test for failure to parse the schema due to unknown/unexpected syntax.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_unexpected_syntax() -&gt; None:
+    """Test for failure to parse the schema due to unknown/unexpected syntax."""
+    with pytest.raises(SchemaParsingError):
+        SchemaParser("!@#$%^&amp;*").to_struct()
+    with pytest.raises(SchemaParsingError):
+        SchemaParser("Struct(!@#$%^&amp;*)").to_struct()</code></pre></details><h3 id=test_parsertest_unknown_datatype><code>test_parser.test_unknown_datatype</code></h3><pre class=highlight><code class=language-python>test_unknown_datatype() -&gt; None:</code></pre><p>Test for unknown datatype.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_unknown_datatype() -&gt; None:
+    """Test for unknown datatype."""
+    with pytest.raises(UnknownDataTypeError):
+        SchemaParser("Foo").to_struct()
+    with pytest.raises(UnknownDataTypeError):
+        SchemaParser("Struct(foo: Bar)").to_struct()
+    with pytest.raises(UnknownDataTypeError):
+        SchemaParser("Struct(foo=fox: Bar)").to_struct()</code></pre></details><h1 id=module-test_unpacker>Module <code>test_unpacker</code></h1><p>Assert capabilities of the <code>DataFrame</code> / <code>LazyFrame</code> flattener.<p><strong>Functions</strong><ul><li><a href=#test_unpackertest_datatype><code>test_datatype()</code></a>: Test a standalone datatype.<li><a href=#test_unpackertest_list><code>test_list()</code></a>: Test a simple <code>polars.List</code> containing a standalone datatype.<li><a href=#test_unpackertest_list_nested_in_list_nested_in_list><code>test_list_nested_in_list_nested_in_list()</code></a>: Test a <code>polars.List</code> nested in parent <code>polars.List</code>s.<li><a href=#test_unpackertest_list_nested_in_struct><code>test_list_nested_in_struct()</code></a>: Test a <code>polars.List</code> nested in a <code>polars.Struct</code>.<li><a href=#test_unpackertest_real_life><code>test_real_life()</code></a>: Test complex real life-like parsing and flattening.<li><a href=#test_unpackertest_rename_fields><code>test_rename_fields()</code></a>: Test for <code>polars.Struct</code> field renaming according to provided schema.<li><a href=#test_unpackertest_struct><code>test_struct()</code></a>: Test a simple <code>polars.Struct</code> containing a few fields.<li><a href=#test_unpackertest_struct_nested_in_list><code>test_struct_nested_in_list()</code></a>: Test a <code>polars.Struct</code> nested in a <code>polars.List</code>.<li><a href=#test_unpackertest_struct_nested_in_struct><code>test_struct_nested_in_struct()</code></a>: Test a <code>polars.Struct</code> nested within another <code>polars.Struct</code>.</ul><h2 id=functions_1>Functions</h2><h3 id=test_unpackertest_datatype><code>test_unpacker.test_datatype</code></h3><pre class=highlight><code class=language-python>test_datatype() -&gt; None:</code></pre><p>Test a standalone datatype.<p>Test the following JSON content:<pre class=highlight><code class=language-json>1</code></pre><p>as described by the following schema:<pre class=highlight><code>Int64</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_datatype() -&gt; None:
+    """Test a standalone datatype.
+
+    Test the following JSON content:
+
+    ```json
+    1
+    ```
+
+    as described by the following schema:
+
+    ```
+    Int64
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("", pl.Int64),
+        ],
+    )
+
+    df = pl.DataFrame([0, 1, 2, 3], dtype)
+
+    # tested in the other module but might as well...
+    assert SchemaParser("Int64").to_struct() == dtype
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(df)</code></pre></details><h3 id=test_unpackertest_list><code>test_unpacker.test_list</code></h3><pre class=highlight><code class=language-python>test_list() -&gt; None:</code></pre><p>Test a simple <code>polars.List</code> containing a standalone datatype.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": [
+        0,
+        1,
+        2,
+        3
+    ]
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: List(Int64)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_list() -&gt; None:
+    """Test a simple `polars.List` containing a standalone datatype.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": [
+            0,
+            1,
+            2,
+            3
+        ]
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: List(Int64)
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field("json", pl.List(pl.Int64)),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": "foobar",
+            "json": json.loads("[[0, 1, 2, 3]]"),
+        },
+        dtype,
+    )
+
+    assert SchemaParser("text:String,json:List(Int64)").to_struct() == dtype
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(df.explode("json"))</code></pre></details><h3 id=test_unpackertest_list_nested_in_list_nested_in_list><code>test_unpacker.test_list_nested_in_list_nested_in_list</code></h3><pre class=highlight><code class=language-python>test_list_nested_in_list_nested_in_list() -&gt; None:</code></pre><p>Test a <code>polars.List</code> nested in parent <code>polars.List</code>s.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": [
+        [
+            [
+                [10, 12],
+                [11, 13]
+            ],
+            [
+                [30, 32],
+                [31, 33]
+            ]
+        ],
+        [
+            [
+                [20, 22],
+                [21, 23]
+            ],
+            [
+                [40, 42],
+                [41, 43]
+            ]
+        ]
+    ]
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: List(List(List(Int64)))</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_list_nested_in_list_nested_in_list() -&gt; None:
+    """Test a `polars.List` nested in parent `polars.List`s.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": [
+            [
+                [
+                    [10, 12],
+                    [11, 13]
+                ],
+                [
+                    [30, 32],
+                    [31, 33]
+                ]
+            ],
+            [
+                [
+                    [20, 22],
+                    [21, 23]
+                ],
+                [
+                    [40, 42],
+                    [41, 43]
+                ]
+            ]
+        ]
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: List(List(List(Int64)))
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.List(
+                    pl.List(
+                        pl.List(pl.Int64),
+                    ),
+                ),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": "foobar",
+            "json": json.loads(
+                "[[[[10, 12], [11, 13]], [[30, 32], [31, 33]]],"
+                " [[[20, 22], [21, 23]], [[40, 42], [41, 43]]]]",
+            ),
+        },
+        dtype,
+    )
+
+    assert SchemaParser("text:String,json:List(List(List(Int64)))").to_struct() == dtype
+    assert dtype.to_schema() == df.schema
+    assert (
+        df.json.unpack(dtype)
+        .rename({"json.json.json.json": "json"})
+        .equals(
+            df.explode("json").explode("json").explode("json"),
+        )
+    )</code></pre></details><h3 id=test_unpackertest_list_nested_in_struct><code>test_unpacker.test_list_nested_in_struct</code></h3><pre class=highlight><code class=language-python>test_list_nested_in_struct() -&gt; None:</code></pre><p>Test a <code>polars.List</code> nested in a <code>polars.Struct</code>.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": {
+        "foo": {
+            "fox": 0,
+            "foz": 2
+        },
+        "bar": [
+            1,
+            3
+        ]
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: Struct(
+    foo: Struct(
+        fox: Int64,
+        foz: Int64
+    ),
+    bar: List(Int64)
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_list_nested_in_struct() -&gt; None:
+    """Test a `polars.List` nested in a `polars.Struct`.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": {
+            "foo": {
+                "fox": 0,
+                "foz": 2
+            },
+            "bar": [
+                1,
+                3
+            ]
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: Struct(
+        foo: Struct(
+            fox: Int64,
+            foz: Int64
+        ),
+        bar: List(Int64)
+    )
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.Struct(
+                    [
+                        pl.Field(
+                            "foo",
+                            pl.Struct(
+                                [pl.Field("fox", pl.Int64), pl.Field("foz", pl.Int64)],
+                            ),
+                        ),
+                        pl.Field("bar", pl.List(pl.Int64)),
+                    ],
+                ),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": ["foobar"],
+            "json": [
+                json.loads(
+                    '{"foo": {"fox": 0, "foz": 2}, "bar": [1, 3]}',
+                ),
+            ],
+        },
+        dtype,
+    )
+
+    assert (
+        SchemaParser(
+            "text:String,json:Struct(foo:Struct(fox:Int64,foz:Int64),bar:List(Int64))",
+        ).to_struct()
+        == dtype
+    )
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(
+        df.unnest("json")
+        .unnest("foo")
+        .explode("bar")
+        .rename({"fox": "json.foo.fox", "foz": "json.foo.foz", "bar": "json.bar"}),
+    )</code></pre></details><h3 id=test_unpackertest_real_life><code>test_unpacker.test_real_life</code></h3><pre class=highlight><code class=language-python>test_real_life(df: pl.DataFrame) -&gt; None:</code></pre><p>Test complex real life-like parsing and flattening.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "headers": {
+        "timestamp": 1372182309,
+        "source": "Online.Transactions",
+        "offset": 123456789,
+    },
+    "payload": {
+        "transaction": "inbound",
+        "location": 765,
+        "customer": {
+            "type": "REGISTERED",
+            "identifier": "a8098c1a-f86e-11da-bd1a-00112444be1e"
+        },
+        "lines": [
+            {
+                "product": 76543,
+                "description": "Toilet plunger",
+                "quantity": 2,
+                "vatRate": 0.21,
+                "amount": {
+                    "includingVat": 10.0,
+                    "excludingVat": 8.26,
+                    "vat": 1.74,
+                    "currency": "EUR"
+                },
+                "discounts": [
+                    {
+                        "promotion": 100023456000789,
+                        "description": "Buy one get two",
+                        "amount": {
+                            "includingVat": 10.0,
+                            "excludingVat": 8.26,
+                            "vat": 1.74,
+                            "currency": "EUR"
+                        }
+                    }
+                ]
+            },
+            {
+                "product": 3456,
+                "description": "Toilet cap",
+                "quantity": 1,
+                "vatRate": 0.21,
+                "amount": {
+                    "includingVat": 30.0,
+                    "excludingVat": 24.79,
+                    "vat": 5.21,
+                    "currency": "EUR"
+                }
+            }
+        ],
+        "payment": {
+            "method": "Card",
+            "company": "OnlineBanking",
+            "identifier": 123456789,
+            "amount": {
+                "includingVat": 40.0,
+                "excludingVat": 33.05,
+                "vat": 6.95,
+                "currency": "EUR"
+            }
+        }
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>headers: Struct&lt;
+    timestamp: Int64
+    source: String
+    offset: Int64
+&gt;
+payload: Struct&lt;
+    transaction=transaction_type: String
+    location: Int64
+    customer: Struct{
+        type=customer_type: String
+        identifier=customer_identifier: String
+    }
+    lines: List[
+        Struct{
+            product: Int64
+            description=product_description: String
+            quantity: Int64
+            vatRate=vat_rate: Float64
+            amount: Struct(
+                includingVat=line_amount_including_vat: Float64
+                excludingVat=line_amount_excluding_vat: Float64
+                vat=line_amount_vat: Float64
+                currency=line_amount_currency: String
+            )
+            discounts: List[
+                Struct{
+                    promotion: Int64
+                    description=promotion_description: String
+                    amount: Struct{
+                        includingVat=discount_amount_including_vat: Float64
+                        excludingVat=discount_amount_excluding_vat: Float64
+                        vat=discount_amount_vat: Float64
+                        currency=discount_amount_currency: String
+                    }
+                }
+            ]
+        }
+    ]
+    payment: Struct{
+        method: String
+        company: String
+        identifier=transaction_identifier: Int64
+        amount: Struct{
+            includingVat=total_amount_including_vat: Float64
+            excludingVat=total_amount_excluding_vat: Float64
+            vat=total_amount_vat: Float64
+            currency=total_amount_currency: String
+        }
+    }
+&gt;</code></pre><p><strong>Parameters</strong><ul><li><code>df</code> [<code>polars.DataFrame</code>]: Unpacked <code>Polars</code> <code>DataFrame</code>.</ul><p><strong>Decoration</strong> via <code>@pytest.mark.parametrize()</code>.<details><summary>source</summary><pre class=highlight><code class=language-python>def test_real_life(df: pl.DataFrame) -&gt; None:
+    """Test complex real life-like parsing and flattening.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "headers": {
+            "timestamp": 1372182309,
+            "source": "Online.Transactions",
+            "offset": 123456789,
+        },
+        "payload": {
+            "transaction": "inbound",
+            "location": 765,
+            "customer": {
+                "type": "REGISTERED",
+                "identifier": "a8098c1a-f86e-11da-bd1a-00112444be1e"
+            },
+            "lines": [
+                {
+                    "product": 76543,
+                    "description": "Toilet plunger",
+                    "quantity": 2,
+                    "vatRate": 0.21,
+                    "amount": {
+                        "includingVat": 10.0,
+                        "excludingVat": 8.26,
+                        "vat": 1.74,
+                        "currency": "EUR"
+                    },
+                    "discounts": [
+                        {
+                            "promotion": 100023456000789,
+                            "description": "Buy one get two",
+                            "amount": {
+                                "includingVat": 10.0,
+                                "excludingVat": 8.26,
+                                "vat": 1.74,
+                                "currency": "EUR"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "product": 3456,
+                    "description": "Toilet cap",
+                    "quantity": 1,
+                    "vatRate": 0.21,
+                    "amount": {
+                        "includingVat": 30.0,
+                        "excludingVat": 24.79,
+                        "vat": 5.21,
+                        "currency": "EUR"
+                    }
+                }
+            ],
+            "payment": {
+                "method": "Card",
+                "company": "OnlineBanking",
+                "identifier": 123456789,
+                "amount": {
+                    "includingVat": 40.0,
+                    "excludingVat": 33.05,
+                    "vat": 6.95,
+                    "currency": "EUR"
+                }
+            }
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    headers: Struct&lt;
+        timestamp: Int64
+        source: String
+        offset: Int64
+    &gt;
+    payload: Struct&lt;
+        transaction=transaction_type: String
+        location: Int64
+        customer: Struct{
+            type=customer_type: String
+            identifier=customer_identifier: String
+        }
+        lines: List[
+            Struct{
+                product: Int64
+                description=product_description: String
+                quantity: Int64
+                vatRate=vat_rate: Float64
+                amount: Struct(
+                    includingVat=line_amount_including_vat: Float64
+                    excludingVat=line_amount_excluding_vat: Float64
+                    vat=line_amount_vat: Float64
+                    currency=line_amount_currency: String
+                )
+                discounts: List[
+                    Struct{
+                        promotion: Int64
+                        description=promotion_description: String
+                        amount: Struct{
+                            includingVat=discount_amount_including_vat: Float64
+                            excludingVat=discount_amount_excluding_vat: Float64
+                            vat=discount_amount_vat: Float64
+                            currency=discount_amount_currency: String
+                        }
+                    }
+                ]
+            }
+        ]
+        payment: Struct{
+            method: String
+            company: String
+            identifier=transaction_identifier: Int64
+            amount: Struct{
+                includingVat=total_amount_including_vat: Float64
+                excludingVat=total_amount_excluding_vat: Float64
+                vat=total_amount_vat: Float64
+                currency=total_amount_currency: String
+            }
+        }
+    &gt;
+    ```
+
+    Parameters
+    ----------
+    df : polars.DataFrame
+        Unpacked `Polars` `DataFrame`.
+
+    """
+    df_csv = pl.scan_csv(
+        "tests/samples/complex.csv",
+        dtypes={
+            "timestamp": pl.Int64,
+            "source": pl.String,
+            "offset": pl.Int64,
+            "transaction_type": pl.String,
+            "location": pl.Int64,
+            "customer_type": pl.String,
+            "customer_identifier": pl.String,
+            "product": pl.Int64,
+            "product_description": pl.String,
+            "quantity": pl.Int64,
+            "vat_rate": pl.Float64,
+            "line_amount_including_vat": pl.Float64,
+            "line_amount_excluding_vat": pl.Float64,
+            "line_amount_vat": pl.Float64,
+            "line_amount_currency": pl.String,
+            "promotion": pl.Int64,
+            "promotion_description": pl.String,
+            "discount_amount_including_vat": pl.Float64,
+            "discount_amount_excluding_vat": pl.Float64,
+            "discount_amount_vat": pl.Float64,
+            "discount_amount_currency": pl.String,
+            "method": pl.String,
+            "company": pl.String,
+            "transaction_identifier": pl.Int64,
+            "total_amount_including_vat": pl.Float64,
+            "total_amount_excluding_vat": pl.Float64,
+            "total_amount_vat": pl.Float64,
+            "total_amount_currency": pl.String,
+        },
+    ).collect()
+
+    assert df.dtypes == df_csv.dtypes
+    assert df.equals(df_csv)</code></pre></details><h3 id=test_unpackertest_rename_fields><code>test_unpacker.test_rename_fields</code></h3><pre class=highlight><code class=language-python>test_rename_fields() -&gt; None:</code></pre><p>Test for <code>polars.Struct</code> field renaming according to provided schema.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": {
+        "foo": 0,
+        "bar": 1
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text=string: String,
+json: Struct(
+    foo=fox: Int64,
+    bar=bax: Int64
+)</code></pre><p>which should return:<pre class=highlight><code>┌────────┬─────┬─────┐
+│ string ┆ fox ┆ bax │
+│ ---    ┆ --- ┆ --- │
+│ str    ┆ i64 ┆ i64 │
+╞════════╪═════╪═════╡
+│ foobar ┆ 0   ┆ 1   │
+└────────┴─────┴─────┘</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_rename_fields() -&gt; None:
+    """Test for `polars.Struct` field renaming according to provided schema.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": {
+            "foo": 0,
+            "bar": 1
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text=string: String,
+    json: Struct(
+        foo=fox: Int64,
+        bar=bax: Int64
+    )
+    ```
+
+    which should return:
+
+    ```
+    ┌────────┬─────┬─────┐
+    │ string ┆ fox ┆ bax │
+    │ ---    ┆ --- ┆ --- │
+    │ str    ┆ i64 ┆ i64 │
+    ╞════════╪═════╪═════╡
+    │ foobar ┆ 0   ┆ 1   │
+    └────────┴─────┴─────┘
+    ```
+    """
+    # schema parsing
+    schema = SchemaParser("text=string:String,json:Struct(foo=fox:Int64,bar=bax:Int64)")
+    schema.to_struct()
+
+    # original dataframe
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.Struct([pl.Field("foo", pl.Int64), pl.Field("bar", pl.Int64)]),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": ["foobar"],
+            "json": [json.loads('{"foo": 0, "bar": 1}')],
+        },
+        dtype,
+    )
+
+    # renamed dataframe
+    dtype_renamed = pl.Struct(
+        [
+            pl.Field("string", pl.String),
+            pl.Field(
+                "json",
+                pl.Struct([pl.Field("fox", pl.Int64), pl.Field("bax", pl.Int64)]),
+            ),
+        ],
+    )
+
+    df_renamed = pl.DataFrame(
+        {
+            "string": ["foobar"],
+            "json": [json.loads('{"fox": 0, "bax": 1}')],
+        },
+        dtype_renamed,
+    )
+
+    assert (
+        df.json.unpack(dtype)
+        .rename(schema.json_paths)
+        .equals(df_renamed.unnest("json"))
+    )</code></pre></details><h3 id=test_unpackertest_struct><code>test_unpacker.test_struct</code></h3><pre class=highlight><code class=language-python>test_struct() -&gt; None:</code></pre><p>Test a simple <code>polars.Struct</code> containing a few fields.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": {
+        "foo": 0,
+        "bar": 1
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: Struct(
+    foo: Int64,
+    bar: Int64
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_struct() -&gt; None:
+    """Test a simple `polars.Struct` containing a few fields.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": {
+            "foo": 0,
+            "bar": 1
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: Struct(
+        foo: Int64,
+        bar: Int64
+    )
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.Struct([pl.Field("foo", pl.Int64), pl.Field("bar", pl.Int64)]),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": ["foobar"],
+            "json": [json.loads('{"foo": 0, "bar": 1}')],
+        },
+        dtype,
+    )
+
+    assert (
+        SchemaParser("text:String,json:Struct(foo:Int64,bar:Int64)").to_struct()
+        == dtype
+    )
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(
+        df.unnest("json").rename({"foo": "json.foo", "bar": "json.bar"}),
+    )</code></pre></details><h3 id=test_unpackertest_struct_nested_in_list><code>test_unpacker.test_struct_nested_in_list</code></h3><pre class=highlight><code class=language-python>test_struct_nested_in_list() -&gt; None:</code></pre><p>Test a <code>polars.Struct</code> nested in a <code>polars.List</code>.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": [
+        {
+            "foo": 0,
+            "bar": 1
+        },
+        {
+            "foo": 2,
+            "bar": 3
+        }
+    ]
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: List(
+    Struct(
+        foo: Int64,
+        bar: Int64
+    )
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_struct_nested_in_list() -&gt; None:
+    """Test a `polars.Struct` nested in a `polars.List`.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": [
+            {
+                "foo": 0,
+                "bar": 1
+            },
+            {
+                "foo": 2,
+                "bar": 3
+            }
+        ]
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: List(
+        Struct(
+            foo: Int64,
+            bar: Int64
+        )
+    )
+    ```
+    """
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.List(
+                    pl.Struct([pl.Field("foo", pl.Int64), pl.Field("bar", pl.Int64)]),
+                ),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": "foobar",
+            "json": json.loads('[[{"foo": 0, "bar": 1}, {"foo": 2, "bar": 3}]]'),
+        },
+        dtype,
+    )
+
+    assert (
+        SchemaParser("text:String,json:List(Struct(foo:Int64,bar:Int64))").to_struct()
+        == dtype
+    )
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(
+        df.explode("json")
+        .unnest("json")
+        .rename({"foo": "json.foo", "bar": "json.bar"}),
+    )</code></pre></details><h3 id=test_unpackertest_struct_nested_in_struct><code>test_unpacker.test_struct_nested_in_struct</code></h3><pre class=highlight><code class=language-python>test_struct_nested_in_struct() -&gt; None:</code></pre><p>Test a <code>polars.Struct</code> nested within another <code>polars.Struct</code>.<p>Test the following nested JSON content:<pre class=highlight><code class=language-json>{
+    "text": "foobar",
+    "json": {
+        "foo": {
+            "fox": 0,
+            "foz": 2
+        },
+        "bar": {
+            "bax": 1,
+            "baz": 3
+        }
+    }
+}</code></pre><p>as described by the following schema:<pre class=highlight><code>text: String,
+json: Struct(
+    foo: Struct(
+        fox: Int64,
+        foz: Int64
+    ),
+    bar: Struct(
+        bax: Int64,
+        baz: Int64
+    )
+)</code></pre><details><summary>source</summary><pre class=highlight><code class=language-python>def test_struct_nested_in_struct() -&gt; None:
+    """Test a `polars.Struct` nested within another `polars.Struct`.
+
+    Test the following nested JSON content:
+
+    ```json
+    {
+        "text": "foobar",
+        "json": {
+            "foo": {
+                "fox": 0,
+                "foz": 2
+            },
+            "bar": {
+                "bax": 1,
+                "baz": 3
+            }
+        }
+    }
+    ```
+
+    as described by the following schema:
+
+    ```
+    text: String,
+    json: Struct(
+        foo: Struct(
+            fox: Int64,
+            foz: Int64
+        ),
+        bar: Struct(
+            bax: Int64,
+            baz: Int64
+        )
+    )
+    ```
+    """
+    # yup, this is why we want this to be generated
+    dtype = pl.Struct(
+        [
+            pl.Field("text", pl.String),
+            pl.Field(
+                "json",
+                pl.Struct(
+                    [
+                        pl.Field(
+                            "foo",
+                            pl.Struct(
+                                [pl.Field("fox", pl.Int64), pl.Field("foz", pl.Int64)],
+                            ),
+                        ),
+                        pl.Field(
+                            "bar",
+                            pl.Struct(
+                                [pl.Field("bax", pl.Int64), pl.Field("baz", pl.Int64)],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )
+
+    df = pl.DataFrame(
+        {
+            "text": ["foobar"],
+            "json": [
+                json.loads(
+                    '{"foo": {"fox": 0, "foz": 2}, "bar": {"bax": 1, "baz": 3}}',
+                ),
+            ],
+        },
+        dtype,
+    )
+
+    assert (
+        SchemaParser(
+            "text:String,"
+            "json:Struct(foo:Struct(fox:Int64,foz:Int64),bar:Struct(bax:Int64,baz:Int64))",
+        ).to_struct()
+        == dtype
+    )
+    assert dtype.to_schema() == df.schema
+    assert df.json.unpack(dtype).equals(
+        df.unnest("json")
+        .unnest("foo", "bar")
+        .rename(
+            {
+                "fox": "json.foo.fox",
+                "foz": "json.foo.foz",
+                "bax": "json.bar.bax",
+                "baz": "json.bar.baz",
+            },
+        ),
+    )</code></pre></details></div><span class=spacer></span><footer><a id=prev></a> <span class=spacer></span> <a id=next></a></footer></article></main>

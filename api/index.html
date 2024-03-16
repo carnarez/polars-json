@@ -1,0 +1,1269 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>polars-unpack</title><meta name=title content=polars-unpack><meta name=description content="Automated, schema-based JSON unpacking to Polars objects."><meta property=article:author content=carnarez><meta property=article:published_time content=2024-03-16><meta property=og:type content=article><meta property=og:url content=https://carnarez.github.io/polars-unpack><meta property=og:title content=polars-unpack><meta property=og:description content="Automated, schema-based JSON unpacking to Polars objects."><meta property=og:image content=https://source.unsplash.com/1600x900/?forest><link rel=canonical href=https://carnarez.github.io/polars-unpack><link rel=icon href=# type=image/png><link rel=stylesheet href=https://carnarez.github.io/polars-unpack/style.css><link rel=stylesheet href=style.css><script>function setTheme(e){localStorage.setItem("theme",e),document.documentElement.className=e}function toggleTheme(){"light"===localStorage.getItem("theme")?setTheme("dark"):"dark"===localStorage.getItem("theme")?setTheme("dimmed"):setTheme("light")}"dark"===localStorage.getItem("theme")||!("theme"in localStorage)&&window.matchMedia("(prefers-color-scheme: dark)").matches?setTheme("dark"):"dimmed"===localStorage.getItem("theme")?setTheme("dimmed"):setTheme("light")</script><script>var timer;window.addEventListener("scroll",()=>{const e=document.querySelector("#scroller"),o=document.querySelector("#topbar"),r=document.querySelector("#toc"),i=document.querySelector("article");var t,l;0<e.getBoundingClientRect().top?(e.style.width="0",document.querySelectorAll("aside, article").forEach(e=>{var t=e.className.match(/visible-sidebar/)||"";0<t.length&&e.classList.remove(t)}),r.scrollTop=0):(t=window.scrollY,l=o.offsetHeight+i.offsetHeight-window.innerHeight,e.style.width=100*Math.min(t/l,1)+"%",null!==timer&&clearTimeout(timer),timer=setTimeout(()=>{var t=i.querySelectorAll("h1, h2, h3, h4, h5, h6");for(let e=0;e<t.length;e++)if(0<t[e].getBoundingClientRect().top-parseInt(getComputedStyle(document.documentElement).scrollMarginTop)-1){0===e?history.pushState({},"",window.location.pathname):history.pushState({},"","#"+t[e-1].id);break}r.querySelectorAll("a").forEach(e=>{var t=e.getAttribute("href");t.startsWith("#")&&(t===window.location.hash?(e.classList.add("active"),(e.offsetTop<r.scrollTop+o.offsetHeight||e.offsetTop>window.innerHeight-o.offsetHeight)&&(r.scrollTop=e.offsetTop-2*o.offsetHeight)):e.classList.remove("active"))})},150))}),window.onload=()=>{const r=document.querySelector("#topbar"),i=document.querySelector("#toc"),e=i.querySelectorAll("a"),l=window.location.pathname.replace(/^[/]|[/]$/g,""),t=window.location.hash,c=(e.forEach(e=>{e.setAttribute("onclick","toggleSidebar('#toc')")}),[]),o=[];e.forEach(e=>{(e.getAttribute("href").startsWith("#")?o:c).push(e)}),c.forEach((e,t)=>{var o;e.getAttribute("href").replace(/^[/]|[/]$/g,"")===l&&(e.classList.add("active"),(e.offsetTop<i.scrollTop+r.offsetHeight||e.offsetTop>window.innerHeight-r.offsetHeight)&&(i.scrollTop=e.offsetTop-2*r.offsetHeight),0<t&&(e=c[t-1],o=document.querySelector("#prev"),localStorage.setItem("prev-content",e.href),o.href=e.href,o.text=e.text),t<c.length-1)&&(o=c[t+1],e=document.querySelector("#next"),localStorage.setItem("next-content",o.href),e.href=o.href,e.text=o.text)}),o.forEach(e=>{e.getAttribute("href")===t?(e.classList.add("active"),(e.offsetTop<i.scrollTop+r.offsetHeight||e.offsetTop>window.innerHeight-r.offsetHeight)&&(i.scrollTop=e.offsetTop-2*r.offsetHeight)):e.classList.remove("active")})}</script><script>window.addEventListener("keyup",e=>{var t=document.querySelector("#scroller"),o=e.key;0===t.getBoundingClientRect().top&&"BODY"===e.srcElement.tagName&&("<"===o?window.location.href=localStorage.getItem("prev-content")||"":">"===o?window.location.href=localStorage.getItem("next-content")||"":"."===o?toggleSidebar("#toc"):"?"===o&&toggleSidebar("#search")),"INPUT"===e.srcElement.tagName&&"Escape"===o&&e.srcElement.blur()})</script><script>function toggleSidebar(e,s=void 0){var i=document.querySelector("#scroller"),o=document.querySelector("aside"+e),e=document.querySelector(`aside:not(${e})`),l=document.querySelector("article");0<i.offsetTop&&window.scroll(0,i.offsetTop),e.classList.contains("visible-sidebar")&&(e.classList.remove("visible-sidebar"),l.classList.remove("visible-sidebar")),o.classList.contains("visible-sidebar")?(o.classList.remove("visible-sidebar"),l.classList.remove("visible-sidebar"),s=void 0):(o.classList.add("visible-sidebar"),l.classList.add("visible-sidebar")),void 0!==s?document.querySelector(s).focus():document.activeElement.blur()}</script><script>function lunrSearch(){fetch("https://carnarez.github.io/polars-unpack/index.json").then(e=>e.json()).then(e=>{const t=e.documents,a=lunr.Index.load(e.indexed),o=[],r=document.querySelector("#search-input").value,c=document.querySelector("#search-output");2<r.length?(c.innerHTML=`<li>No results for "<i>${r}</i>" in current corpus.</li>`,a.search(r).forEach(r=>{const e=t[r.ref][0],c=t[r.ref][1],n=t[r.ref][2],s=parseFloat(r.score).toFixed(3);let l="";l=""===e?""!==c?"":"/":(""!==c?e+"/":e).replaceAll("/"," &gt; "),Object.keys(r.matchData.metadata).forEach(e=>{r.matchData.metadata[e].text.position.forEach(e=>{var t=document.createElement("li"),a=parseInt(e[0]),e=parseInt(e[1]);t.innerHTML=`
+                      <a class="search-result" href="https://carnarez.github.io/polars-unpack/${r.ref}" onclick="toggleSidebar('#search')">
+                        <div class="title">${l}${c}</div>
+                        <div class="text">
+                          ${n.slice(Math.max(0,a-100),a)}
+                          <mark>${n.slice(a,a+e)}</mark>
+                          ${n.slice(a+e,Math.min(a+e+100,n.length))}
+                          <span class="score">${s}</span>
+                        </div>
+                      </a>
+                    `,o.push(t)})})}),0<o.length&&c.replaceChildren(...o)):c.replaceChildren()})}function resetSearch(){var e=document.querySelector("#search-input"),t=document.querySelector("#search-output");e.value="",e.focus(),t.replaceChildren()}</script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js onload=hljs.highlightAll()></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><script defer src=https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js></script><nav id=topbar><div><a class=sidebar onclick='toggleSidebar("#toc")'></a> <a class=search onclick='toggleSidebar("#search","#search-input")'></a> <span class=spacer></span> <a class=logo href=https://carnarez.github.io/polars-unpack><img src=""></a><span class=spacer></span> <a class=repo href=https://github.com/carnarez/polars-unpack></a> <a class=theme onclick=toggleTheme()></a></div></nav><nav id=scroller></nav><main><aside id=toc><div class=toc><ul><li><a href=/polars-unpack/ >Home</a><li><a href=/polars-unpack/generator>Schema generator</a><li><a href=/polars-unpack/api>API</a><ul><li><a href=#module-unpack>Module unpack</a><ul><li><a href=#functions>Functions</a><ul><li><a href=#unpackinfer_schema>unpack.infer_schema</a><li><a href=#unpackparse_schema>unpack.parse_schema</a><li><a href=#unpackunpack_ndjson>unpack.unpack_ndjson</a><li><a href=#unpackunpack_text>unpack.unpack_text</a></ul><li><a href=#classes>Classes</a><ul><li><a href=#unpackschemaparser>unpack.SchemaParser</a><ul><li><a href=#constructor>Constructor</a><li><a href=#methods>Methods</a><ul><li><a href=#unpackschemaparserformat_error>unpack.SchemaParser.format_error</a><li><a href=#unpackschemaparserparse_renamed_attr_dtype>unpack.SchemaParser.parse_renamed_attr_dtype</a><li><a href=#unpackschemaparserparse_attr_dtype>unpack.SchemaParser.parse_attr_dtype</a><li><a href=#unpackschemaparserparse_lone_dtype>unpack.SchemaParser.parse_lone_dtype</a><li><a href=#unpackschemaparserparse_opening_delimiter>unpack.SchemaParser.parse_opening_delimiter</a><li><a href=#unpackschemaparserparse_closing_delimiter>unpack.SchemaParser.parse_closing_delimiter</a><li><a href=#unpackschemaparserto_struct>unpack.SchemaParser.to_struct</a></ul></ul><li><a href=#unpackduplicatecolumnerror>unpack.DuplicateColumnError</a><ul><li><a href=#constructor_1>Constructor</a></ul><li><a href=#unpackpathrenamingerror>unpack.PathRenamingError</a><ul><li><a href=#constructor_2>Constructor</a></ul><li><a href=#unpackschemaparsingerror>unpack.SchemaParsingError</a><ul><li><a href=#constructor_3>Constructor</a></ul><li><a href=#unpackunknowndatatypeerror>unpack.UnknownDataTypeError</a><ul><li><a href=#constructor_4>Constructor</a></ul><li><a href=#unpackunpackframe>unpack.UnpackFrame</a><ul><li><a href=#constructor_5>Constructor</a><li><a href=#methods_1>Methods</a><ul><li><a href=#unpackunpackframeunpack>unpack.UnpackFrame.unpack</a></ul></ul></ul></ul></ul><li><a href=/polars-unpack/tests>Tests</a></ul></div></aside><aside id=search><header><a class=search onclick='document.querySelector("#search-input").focus()'></a> <input autocomplete=off id=search-input onkeyup=lunrSearch() placeholder="search with lunr"> <a class=reset onclick=resetSearch()></a></header><ul id=search-output></ul></aside><article><div><h1 id=module-unpack>Module <code>unpack</code></h1><p>Automatic JSON unpacking to <a href=https://pola.rs><code>Polars</code></a> <code>DataFrame</code> or <code>LazyFrame</code>.<p>The use case is as follows:<ul><li>Provide a schema written in plain text describing some JSON content, to be converted into a <code>Polars</code> <code>Struct</code> (see <a href=/polars-unpack/samples>samples</a> in this repo for examples).<li>Read said JSON content, as plain text using <code>scan_csv()</code> for instance, or directly as JSON via <code>scan_ndjson()</code> and automagically unpack the nested content by processing the schema (<em>spoiler: the plain text way is better suited for our needs in the current</em> <code>Polars</code> <em>implementation</em>).</ul><p>A few extra points:<ul><li>The schema should be dominant and we should rename fields as they are being unpacked to avoid identical names for different columns (which is forbidden by <code>Polars</code> for obvious reasons).<li><em>But why not simply using the inferred schema?</em> Because at times we need to provide fields that might <em>not</em> be in the JSON file to fit a certain data structure, or ignore part of the JSON data when unpacking to avoid wasting resources. Oh, and to rename fields too.</ul><p>The requirements are illustrated below (JSON input, plain text schema, <code>Polars</code> output):<p><pre class=highlight><code class=language-json>{
+    "column": "content",
+    "nested": [
+        {
+            "attr": 0,
+            "attr2": 2
+        },
+        {
+            "attr": 1,
+            "attr2": 3
+        }
+    ],
+    "omitted_in_schema": "ignored"
+}</code></pre><pre class=highlight><code class=language-text>column: String
+nested: List(
+    Struct(
+        attr: UInt8
+        attr2=renamed: UInt8
+    )
+)
+missing_from_source: Float32</code></pre><pre class=highlight><code class=language-text>┌─────────┬──────┬─────────┬─────────────────────┐
+│ column  ┆ attr ┆ renamed ┆ missing_from_source │
+│ ---     ┆ ---  ┆ ---     ┆ ---                 │
+│ str     ┆ ui8  ┆ ui8     ┆ f32                 │
+╞═════════╪══════╪═════════╪═════════════════════╡
+│ content ┆ 0    ┆ 2       ┆ null                │
+│ content ┆ 1    ┆ 3       ┆ null                │
+└─────────┴──────┴─────────┴─────────────────────┘</code></pre><p>The current working state of this little DIY can be checked (in <code>Docker</code>) via:<pre class=highlight><code class=language-shell>$ make env
+&gt; python unpack.py tests/samples/complex.schema tests/samples/complex.ndjson</code></pre><p>Note that a call to the same script <em>without</em> providing a schema returns a representation of the latter as <em>inferred</em> by <code>Polars</code> (works as an example of the syntax used to describe things in plain text):<pre class=highlight><code class=language-shell>$ make env
+&gt; python unpack.py tests/samples/complex.ndjson</code></pre><p>A thorough(-ish) battery of tests can be performed (in <code>Docker</code>) via:<pre class=highlight><code class=language-shell>$ make test</code></pre><p>Although testing various functionalities, these tests are pretty independent. But the <code>test_real_life()</code> functions working on a common example (<a href=/polars-unpack/tests/samples/complex.schema>schema</a> &amp; <a href=/polars-unpack/tests/samples/complex.ndjson>data</a>) are there to check if this is only fantasy. Running is convincing!<p>Feel free to cherry-pick and extend the functionalities to your own use cases.<p><strong>Functions</strong><ul><li><a href=#unpackinfer_schema><code>infer_schema()</code></a>: Lazily scan newline-delimited JSON data and print the <code>Polars</code>-inferred schema.<li><a href=#unpackparse_schema><code>parse_schema()</code></a>: Parse a plain text JSON schema into a <code>Polars</code> <code>Struct</code>.<li><a href=#unpackunpack_ndjson><code>unpack_ndjson()</code></a>: Lazily scan and unpack newline-delimited JSON file given a <code>Polars</code> schema.<li><a href=#unpackunpack_text><code>unpack_text()</code></a>: Lazily scan and unpack JSON data read as plain text, given a <code>Polars</code> schema.</ul><p><strong>Classes</strong><ul><li><a href=#unpackschemaparser><code>SchemaParser</code></a>: Parse a plain text JSON schema into a <code>Polars</code> <code>Struct</code>.<li><a href=#unpackduplicatecolumnerror><code>DuplicateColumnError</code></a>: When a column is encountered more than once in the schema.<li><a href=#unpackpathrenamingerror><code>PathRenamingError</code></a>: When a parent (in a JSON path sense) is being renamed.<li><a href=#unpackschemaparsingerror><code>SchemaParsingError</code></a>: When unexpected content is encountered and cannot be parsed.<li><a href=#unpackunknowndatatypeerror><code>UnknownDataTypeError</code></a>: When an unknown/unsupported datatype is encountered.<li><a href=#unpackunpackframe><code>UnpackFrame</code></a>: Register a new <code>df.json.unpack()</code> method onto <code>Polars</code> objects.</ul><h2 id=functions>Functions</h2><h3 id=unpackinfer_schema><code>unpack.infer_schema</code></h3><pre class=highlight><code class=language-python>infer_schema(path_data: str) -&gt; str:</code></pre><p>Lazily scan newline-delimited JSON data and print the <code>Polars</code>-inferred schema.<p>We expect the following example JSON:<pre class=highlight><code class=language-json>{ "attribute": "test", "nested": { "foo": 1.23, "bar": -8, "vector": [ 0, 1, 2 ] } }</code></pre><p>to translate into the given <code>Polars</code> schema:<pre class=highlight><code class=language-text>attribute: String
+nested: Struct(
+    foo: Float32
+    bar: Int16
+    vector: List(UInt8)
+)</code></pre><p>Although this merely started as a test for the output of the schema parser defined somewhere below in this very script, it became quite useful to get a head start when writing a schema by hand.<p><strong>Parameters</strong><ul><li><code>path_data</code> [<code>str</code>]: Path to a JSON file for <code>Polars</code> to infer its own schema (<em>e.g.</em>, <code>Struct</code> object).</ul><p><strong>Returns</strong><ul><li>[<code>str</code>]: Pretty-printed <code>Polars</code> JSON schema.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def infer_schema(path_data: str) -&gt; str:
+    """Lazily scan newline-delimited JSON data and print the `Polars`-inferred schema.
+
+    We expect the following example JSON:
+
+    ```json
+    { "attribute": "test", "nested": { "foo": 1.23, "bar": -8, "vector": [ 0, 1, 2 ] } }
+    ```
+
+    to translate into the given `Polars` schema:
+
+    ```text
+    attribute: String
+    nested: Struct(
+        foo: Float32
+        bar: Int16
+        vector: List(UInt8)
+    )
+    ```
+
+    Although this merely started as a test for the output of the schema parser defined
+    somewhere below in this very script, it became quite useful to get a head start when
+    writing a schema by hand.
+
+    Parameters
+    ----------
+    path_data : str
+        Path to a JSON file for `Polars` to infer its own schema (_e.g._, `Struct`
+        object).
+
+    Returns
+    -------
+    : str
+        Pretty-printed `Polars` JSON schema.
+
+    """
+
+    # quick work
+    def _pprint(field: str, dtype: pl.DataType, indent: str = "") -&gt; str:
+        """Recursively loop over the inferred schema and pretty print its structure.
+
+        Parameters
+        ----------
+        field : str
+            Name of the current field, including `:` separator.
+        dtype : polars.DataType
+            Datatype of the current field; nested or not.
+        indent : str
+            String used to indent (a number of spaces?); defaults to empty string
+            (`""`).
+
+        Returns
+        -------
+        : str
+            Pretty-printed field name and datatype of the current field.
+
+        """
+        schema = ""
+
+        # nested datatype: Struct
+        if hasattr(dtype, "fields"):
+            schema += f"{indent}{field}{dtype.__class__.__name__}(\n"
+            for f, d in dtype.to_schema().items():
+                schema += _pprint(f"{f}: ", d, f"{indent}    ")
+            schema += f"{indent})\n"
+
+        # nested datatypes: Array, List
+        elif hasattr(dtype, "inner"):
+            schema += f"{indent}{field}{dtype.__class__.__name__}(\n"
+            schema += _pprint("", dtype.inner, f"{indent}    ")
+            schema += f"{indent})\n"
+
+        # non-nested datatypes
+        else:
+            schema += f"{indent}{field}{dtype}\n"
+
+        return schema
+
+    # generate the pretty-printed schema
+    schema = ""
+    for field, dtype in pl.scan_ndjson(path_data).schema.items():
+        schema += _pprint(f"{field}: ", dtype)
+
+    return schema.strip()</code></pre></details><h3 id=unpackparse_schema><code>unpack.parse_schema</code></h3><pre class=highlight><code class=language-python>parse_schema(path_schema: str) -&gt; pl.Struct:</code></pre><p>Parse a plain text JSON schema into a <code>Polars</code> <code>Struct</code>.<p><strong>Parameters</strong><ul><li><code>path_schema</code> [<code>str</code>]: Path to the plain text file describing the JSON schema.</ul><p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: JSON schema translated into <code>Polars</code> datatypes.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def parse_schema(path_schema: str) -&gt; pl.Struct:
+    """Parse a plain text JSON schema into a `Polars` `Struct`.
+
+    Parameters
+    ----------
+    path_schema : str
+        Path to the plain text file describing the JSON schema.
+
+    Returns
+    -------
+    : polars.Struct
+        JSON schema translated into `Polars` datatypes.
+
+    """
+    with pathlib.Path(path_schema).open() as f:
+        sp = SchemaParser(f.read())
+        sp.to_struct()
+
+        return sp</code></pre></details><h3 id=unpackunpack_ndjson><code>unpack.unpack_ndjson</code></h3><pre class=highlight><code class=language-python>unpack_ndjson(path_schema: str, path_data: str) -&gt; pl.LazyFrame:</code></pre><p>Lazily scan and unpack newline-delimited JSON file given a <code>Polars</code> schema.<p><strong>Parameters</strong><ul><li><code>path_schema</code> [<code>str</code>]: Path to the plain text schema describing the JSON content.<li><code>path_data</code> [<code>str</code>]: Path to the JSON file (or multiple files via glob patterns).</ul><p><strong>Returns</strong><ul><li>[<code>polars.LazyFrame</code>]: Unpacked JSON content, lazy style.</ul><p><strong>Notes</strong><ul><li>Fields described in the schema but absent from the JSON source will be added as <code>null</code> values.<li>Fields present in the JSON source but absent from the schema will be dropped.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def unpack_ndjson(path_schema: str, path_data: str) -&gt; pl.LazyFrame:
+    """Lazily scan and unpack newline-delimited JSON file given a `Polars` schema.
+
+    Parameters
+    ----------
+    path_schema : str
+        Path to the plain text schema describing the JSON content.
+    path_data : str
+        Path to the JSON file (or multiple files via glob patterns).
+
+    Returns
+    -------
+    : polars.LazyFrame
+        Unpacked JSON content, lazy style.
+
+    Notes
+    -----
+    * Fields described in the schema but absent from the JSON source will be added as
+      `null` values.
+    * Fields present in the JSON source but absent from the schema will be dropped.
+
+    """
+    s = parse_schema(path_schema)
+
+    # read as json and unpack the object
+    df = pl.scan_ndjson(path_data).json.unpack(s.struct)
+
+    # add missing columns
+    df = df.with_columns(
+        [
+            pl.lit(None).cast(d).alias(p)
+            for p, d in zip(s.json_paths.keys(), s.dtypes, strict=True)
+            if p not in df.columns
+        ],
+    )
+
+    # rename fields (otherwise renamed to their full json paths)
+    df = df.rename(s.json_paths)
+
+    # final selection (drop extra/unwanted columns)
+    return df.select(s.columns)</code></pre></details><h3 id=unpackunpack_text><code>unpack.unpack_text</code></h3><pre class=highlight><code class=language-python>unpack_text(
+    path_schema: str,
+    path_data: str,
+    separator: str = "|",
+    **kwargs,
+) -&gt; pl.LazyFrame:</code></pre><p>Lazily scan and unpack JSON data read as plain text, given a <code>Polars</code> schema.<p><strong>Parameters</strong><ul><li><code>path_schema</code> [<code>str</code>]: Path to the plain text schema describing the JSON content.<li><code>path_data</code> [<code>str</code>]: Path to the JSON file (or multiple files via glob patterns).<li><code>separator</code> [<code>str</code>]: Separator to use when parsing the JSON file as a CSV; defaults to <code>|</code> but <code>#</code> or <code>$</code> could be good candidates too (as are UTF-8 characters?). Note this separator should *NOT* be present in the file at all (<code>,</code> or <code>:</code> are thus out of question given the JSON context).</ul><p><strong>Returns</strong><ul><li>[<code>polars.LazyFrame</code>]: Unpacked JSON content, lazy style.</ul><p><strong>Notes</strong><p>This is mostly a test, to verify the output would be identical, as this unpacking use case could be applied on a CSV column containing some JSON content for instance. The preferred way for native JSON content remains the <code>unpack_ndjson()</code> function defined in this same script.<p>In the current <code>Polars</code> implementation this function is however better suited for the use case: the provided schema is always dominant, regardless of the content of the JSON file. We do not need to add or remove missing or supplementary columns, everything is taken care of by the <code>json_extract()</code> method.<details><summary>source</summary><pre class=highlight><code class=language-python>def unpack_text(
+    path_schema: str,
+    path_data: str,
+    separator: str = "|",
+    **kwargs,
+) -&gt; pl.LazyFrame:
+    r"""Lazily scan and unpack JSON data read as plain text, given a `Polars` schema.
+
+    Parameters
+    ----------
+    path_schema : str
+        Path to the plain text schema describing the JSON content.
+    path_data : str
+        Path to the JSON file (or multiple files via glob patterns).
+    separator : str
+        Separator to use when parsing the JSON file as a CSV; defaults to `|` but `#` or
+        `$` could be good candidates too (as are UTF-8 characters?). Note this separator
+        should \*NOT\* be present in the file at all (`,` or `:` are thus out of
+        question given the JSON context).
+
+    Returns
+    -------
+    : polars.LazyFrame
+        Unpacked JSON content, lazy style.
+
+    Notes
+    -----
+    This is mostly a test, to verify the output would be identical, as this unpacking
+    use case could be applied on a CSV column containing some JSON content for instance.
+    The preferred way for native JSON content remains the `unpack_ndjson()` function
+    defined in this same script.
+
+    In the current `Polars` implementation this function is however better suited for
+    the use case: the provided schema is always dominant, regardless of the content of
+    the JSON file. We do not need to add or remove missing or supplementary columns,
+    everything is taken care of by the `json_extract()` method.
+
+    """
+    s = parse_schema(path_schema)
+
+    # read as plain text
+    # unpack object and rename fields (otherwise renamed to their full json paths)
+    # no other transformations are necessary as the schema is already dominant here
+    return (
+        pl.scan_csv(
+            path_data,
+            has_header=False,
+            new_columns=["raw"],
+            separator=separator,
+            **kwargs,
+        )
+        .select(pl.col("raw").str.json_decode(s.struct))
+        .unnest("raw")
+        .json.unpack(s.struct)
+        .rename(s.json_paths)
+    )</code></pre></details><h2 id=classes>Classes</h2><h3 id=unpackschemaparser><code>unpack.SchemaParser</code></h3><p>Parse a plain text JSON schema into a <code>Polars</code> <code>Struct</code>.<p><strong>Methods</strong><ul><li><a href=#unpackschemaparserformat_error><code>format_error()</code></a>: Format the message printed in the exception when an issue occurs.<li><a href=#unpackschemaparserparse_renamed_attr_dtype><code>parse_renamed_attr_dtype()</code></a>: Parse and register an attribute, its new name, and its associated datatype.<li><a href=#unpackschemaparserparse_attr_dtype><code>parse_attr_dtype()</code></a>: Parse and register an attribute and its associated datatype.<li><a href=#unpackschemaparserparse_lone_dtype><code>parse_lone_dtype()</code></a>: Parse and register a standalone datatype (found within a list for instance).<li><a href=#unpackschemaparserparse_opening_delimiter><code>parse_opening_delimiter()</code></a>: Parse and register the opening of a nested structure.<li><a href=#unpackschemaparserparse_closing_delimiter><code>parse_closing_delimiter()</code></a>: Parse and register the closing of a nested structure.<li><a href=#unpackschemaparserto_struct><code>to_struct()</code></a>: Parse the plain text schema into a <code>Polars</code> <code>Struct</code>.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>class SchemaParser:
+    """Parse a plain text JSON schema into a `Polars` `Struct`."""
+
+    def __init__(self, source: str = "", separator: str = ".") -&gt; None:
+        """Instantiate the object.
+
+        Parameters
+        ----------
+        source : str
+            JSON schema described in plain text, using `Polars` datatypes; defaults to
+            an empty string (`""`).
+        separator : str
+            JSON path separator to use when building the full JSON path; defaults to a
+            dot (`.`).
+
+        Attributes
+        ----------
+        columns : list[str]
+            Expected list of columns in the final `Polars` `DataFrame` or `LazyFrame`.
+        dtypes : list[polars.DataType]
+            Expected list of datatypes in the final `Polars` `DataFrame` or `LazyFrame`.
+        json_paths : dit[str, str]
+            Dictionary of JSON path -&gt; column name pairs.
+        separator : str
+            JSON path separator to use when building the full JSON path.
+        source : str
+            JSON schema described in plain text, using `Polars` datatypes.
+        struct : polars.Struct
+            Plain text schema parsed as a `Polars` `Struct`.
+
+        """
+        self.source = source
+        self.separator = separator
+
+        self.columns: list[str] = []
+        self.dtypes: list[pl.DataType] = []
+        self.json_paths: dict[str, str] = {}
+        self.struct: pl.Struct | None = None
+
+    def format_error(self, unparsed: str) -&gt; str:
+        """Format the message printed in the exception when an issue occurs.
+
+        ```text
+        Tripped on line 2
+
+             1 │ headers: Struct(
+             2 │     timestamp: Foo
+             ? │                ^^^
+        ```
+
+        Parameters
+        ----------
+        unparsed : str
+            Unexpected string that raised the exception.
+
+        Returns
+        -------
+        : str
+            Clean and helpful error message, helpfully.
+
+        Notes
+        -----
+        * In most cases this method will look for the first occurrence of the string
+          that raised the exception; and it might not be the _actual_ line that did so.
+        * This method is absolutely useless and could be removed.
+
+        """
+        # start/end of the issue
+        issue_start = self.source.index(unparsed)
+        issue_end = (
+            issue_start + m.start()
+            if (m := re.search(r"[()\[\]{}&lt;&gt;\n]", self.source[issue_start:]))
+            is not None
+            else len(self.source)
+        )
+
+        # start/end of the line
+        line_start = (
+            issue_start - self.source[:issue_start][::-1].index("\n") + 1
+            if issue_start and "\n" in self.source[:issue_start]
+            else 1
+        )
+        line_end = (
+            issue_end + self.source[issue_end:].index("\n")
+            if "\n" in self.source[issue_end:]
+            else len(self.source)
+        )
+
+        # line number at which the issue happens
+        line_number = self.source[:issue_start].count("\n") + 1
+
+        # captain obvious
+        msg = f"Tripped on line {line_number}\n\n"
+        for i, line in enumerate(self.source[:line_end].split("\n")):
+            msg += f"   {i + 1:-3d} │ {line}\n"
+        msg += "     ? │ "
+        msg += " " * (issue_start - line_start + 1)
+        msg += "^" * (issue_end - issue_start)
+        msg += "\n"
+
+        return msg
+
+    def parse_renamed_attr_dtype(
+        self,
+        struct: pl.Struct,
+        name: str,
+        renamed_to: str,
+        dtype: str,
+    ) -&gt; pl.Struct:
+        """Parse and register an attribute, its new name, and its associated datatype.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        name : str
+            Current attribute name.
+        renamed_to : str
+            New name for the attribute.
+        dtype : str
+            Expected `Polars` datatype for this attribute.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : DuplicateColumnError
+            When a column is encountered more than once in the schema.
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+        field = pl.Field(name, POLARS_DATATYPES[dtype])
+
+        # add to the lists
+        if dtype not in ("array", "list", "struct"):
+            if renamed_to not in self.columns:
+                self.columns.append(renamed_to)
+                self.dtypes.append(POLARS_DATATYPES[dtype])
+
+                # json path and associated column name
+                path = (
+                    self.separator.join(self.record["path"])
+                    .replace("[]", "")
+                    .replace(self.separator * 2, self.separator)
+                    .rstrip(self.separator)
+                )
+                self.json_paths[
+                    f"{path}{self.separator}{name}".lstrip(self.separator)
+                ] = renamed_to
+            else:
+                raise DuplicateColumnError(self.format_error(renamed_to))
+
+        # renaming part of the json path is not supported (nor needed)
+        else:
+            raise PathRenamingError(renamed_to)
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if self.record["parents"]:
+            self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct
+
+    def parse_attr_dtype(self, struct: pl.Struct, name: str, dtype: str) -&gt; pl.Struct:
+        """Parse and register an attribute and its associated datatype.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        name : str
+            Attribute name.
+        dtype : str
+            Expected `Polars` datatype for this attribute.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : DuplicateColumnError
+            When a column is encountered more than once in the schema.
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+        field = pl.Field(name, POLARS_DATATYPES[dtype])
+
+        # add to the lists
+        if dtype not in ("array", "list", "struct"):
+            if name not in self.columns:
+                self.columns.append(name)
+                self.dtypes.append(POLARS_DATATYPES[dtype])
+
+                # json path and associated column name
+                path = (
+                    self.separator.join(self.record["path"])
+                    .replace("[]", "")
+                    .replace(self.separator * 2, self.separator)
+                    .rstrip(self.separator)
+                )
+                self.json_paths[
+                    f"{path}{self.separator}{name}".lstrip(self.separator)
+                ] = name
+            else:
+                raise DuplicateColumnError(self.format_error(name))
+
+        # add the parent to the current path
+        else:
+            self.record["path"].append(name)
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if dtype in ("list", "struct"):
+            self.record["parents"].append((name, dtype))
+        elif self.record["parents"]:
+            self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct
+
+    def parse_lone_dtype(self, struct: pl.Struct, dtype: str) -&gt; pl.Struct:
+        """Parse and register a standalone datatype (found within a list for instance).
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        dtype : str
+            Expected `Polars` datatype.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+
+        # add to the path
+        if dtype in ("list", "struct"):
+            self.record["path"].append("[]")
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if dtype in ("list", "struct"):
+            self.record["parents"].append(("", dtype))
+        elif self.record["parents"]:
+            self.record["lists"].append(POLARS_DATATYPES[dtype])
+        else:
+            struct.append(pl.Field("", POLARS_DATATYPES[dtype]))
+
+        return struct
+
+    def parse_opening_delimiter(self) -&gt; None:
+        """Parse and register the opening of a nested structure."""
+        # create a new list to register new fields
+        if self.record["parents"][-1][1] == "struct":
+            self.record["structs"].append([])
+
+    def parse_closing_delimiter(self, struct: pl.Struct) -&gt; pl.Struct:
+        """Parse and register the closing of a nested structure.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        """
+        name, dtype = self.record["parents"].pop()
+
+        # remove a parent from the current path
+        if self.record["path"]:
+            self.record["path"].pop()
+
+        # list
+        if dtype == "list":
+            f = self.record["lists"].pop()
+            d = f.dtype if hasattr(f, "dtype") else f
+
+            # list within struct or list within list
+            field = pl.Field(name, pl.List(d)) if name else pl.List(d)
+
+        # struct
+        else:
+            field = pl.Field(name, pl.Struct(self.record["structs"].pop()))
+
+        # add the attribute to the current nested object, or the root struct
+        if self.record["parents"]:
+            if self.record["parents"][-1][1] == "list":
+                self.record["lists"].append(field)
+            else:
+                self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct
+
+    def to_struct(self) -&gt; pl.Struct:
+        r"""Parse the plain text schema into a `Polars` `Struct`.
+
+        We expect something as follows:
+
+        ```text
+        attribute: String
+        nested: Struct(
+            foo: Float32
+            bar=bax: Int16
+            vector: List[UInt8]
+        )
+        ```
+
+        to translate into a `Polars` native `Struct` object:
+
+        ```python
+        polars.Struct([
+            polars.Field("attribute", polars.String),
+            polars.Struct([
+                polars.Field("foo", polars.Float32),
+                polars.Field("bar", polars.Int16),
+                polars.Field("vector", polars.List(polars.UInt8))
+            ])
+        ])
+        ```
+
+        The following patterns (recognised via regular expressions) are supported:
+
+        * `([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute
+          name, an equal sign (`=`), a new name for the attribute, a column (`:`) and a
+          datatype.
+        * `([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute name, a column (`:`)
+          and a datatype; for instance `attribute: String` in the example above.
+        * `([A-Za-z0-9]+)` for a lone datatype; for instance the inner content of the
+          `List()` in the example above. Keep in mind this datatype could be a complex
+          structure as much as a canonical datatype.
+        * `[(\[{&lt;]` and its `[)\]}&gt;]` counterpart for opening and closing of nested
+          datatypes. Any of these characters can be used to open or close nested
+          structures; mixing also allowed, for the better or the worse.
+
+        Note attribute names and datatypes must not contain spaces and only include
+        alphanumerical or underscore (`_`) characters.
+
+        Indentation and trailing commas are ignored. The source is parsed until the end
+        of the file is reached or a `SchemaParsingError` exception is raised.
+
+        Returns
+        -------
+        : polars.Struct
+            Plain text schema parsed as a `Polars` `Struct`.
+
+        Raises
+        ------
+        : SchemaParsingError
+            When unexpected content is encountered and cannot be parsed.
+
+        """
+        s = self.source
+        struct: list[pl.Datatype] = []
+
+        # bookkeeping
+        self.record: dict = {"lists": [], "parents": [], "path": [], "structs": []}
+
+        # continue until everything is parsed
+        while s:
+            if (
+                m := re.match(
+                    r"([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)",
+                    s,
+                )
+            ) is not None:
+                struct = self.parse_renamed_attr_dtype(
+                    struct,
+                    m.group(1),
+                    m.group(2),
+                    m.group(3),
+                )
+            elif (
+                m := re.match(r"([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)", s)
+            ) is not None:
+                struct = self.parse_attr_dtype(struct, m.group(1), m.group(2))
+            elif (m := re.match(r"([A-Za-z0-9]+)", s)) is not None:
+                struct = self.parse_lone_dtype(struct, m.group(1))
+            elif (m := re.match(r"[(\[{&lt;]", s)) is not None:
+                self.parse_opening_delimiter()
+            elif (m := re.match(r"[)\]}&gt;]", s)) is not None:
+                struct = self.parse_closing_delimiter(struct)
+            elif (m := re.match(r"[,\n\s]+", s)) is not None:
+                pass
+            else:
+                raise SchemaParsingError(self.format_error(s))
+
+            # clean up the current match
+            s = s.replace(m.group(0), "", 1)
+
+        # clean up in case someone checks the object attributes
+        delattr(self, "record")
+
+        # build the final object
+        self.struct = pl.Struct(struct)
+
+        return self.struct</code></pre></details><h4 id=constructor>Constructor</h4><pre class=highlight><code class=language-python>SchemaParser(source: str = "", separator: str = ".")</code></pre><p>Instantiate the object.<p><strong>Parameters</strong><ul><li><code>source</code> [<code>str</code>]: JSON schema described in plain text, using <code>Polars</code> datatypes; defaults to an empty string (<code>""</code>).<li><code>separator</code> [<code>str</code>]: JSON path separator to use when building the full JSON path; defaults to a dot (<code>.</code>).</ul><p><strong>Attributes</strong><ul><li><code>columns</code> [<code>list[str]</code>]: Expected list of columns in the final <code>Polars</code> <code>DataFrame</code> or <code>LazyFrame</code>.<li><code>dtypes</code> [<code>list[polars.DataType]</code>]: Expected list of datatypes in the final <code>Polars</code> <code>DataFrame</code> or <code>LazyFrame</code>.<li><code>json_paths</code> [<code>dit[str, str]</code>]: Dictionary of JSON path -&gt; column name pairs.<li><code>separator</code> [<code>str</code>]: JSON path separator to use when building the full JSON path.<li><code>source</code> [<code>str</code>]: JSON schema described in plain text, using <code>Polars</code> datatypes.<li><code>struct</code> [<code>polars.Struct</code>]: Plain text schema parsed as a <code>Polars</code> <code>Struct</code>.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def __init__(self, source: str = "", separator: str = ".") -&gt; None:
+        """Instantiate the object.
+
+        Parameters
+        ----------
+        source : str
+            JSON schema described in plain text, using `Polars` datatypes; defaults to
+            an empty string (`""`).
+        separator : str
+            JSON path separator to use when building the full JSON path; defaults to a
+            dot (`.`).
+
+        Attributes
+        ----------
+        columns : list[str]
+            Expected list of columns in the final `Polars` `DataFrame` or `LazyFrame`.
+        dtypes : list[polars.DataType]
+            Expected list of datatypes in the final `Polars` `DataFrame` or `LazyFrame`.
+        json_paths : dit[str, str]
+            Dictionary of JSON path -&gt; column name pairs.
+        separator : str
+            JSON path separator to use when building the full JSON path.
+        source : str
+            JSON schema described in plain text, using `Polars` datatypes.
+        struct : polars.Struct
+            Plain text schema parsed as a `Polars` `Struct`.
+
+        """
+        self.source = source
+        self.separator = separator
+
+        self.columns: list[str] = []
+        self.dtypes: list[pl.DataType] = []
+        self.json_paths: dict[str, str] = {}
+        self.struct: pl.Struct | None = None</code></pre></details><h4 id=methods>Methods</h4><h5 id=unpackschemaparserformat_error><code>unpack.SchemaParser.format_error</code></h5><pre class=highlight><code class=language-python>format_error(unparsed: str) -&gt; str:</code></pre><p>Format the message printed in the exception when an issue occurs.<pre class=highlight><code class=language-text>Tripped on line 2
+
+     1 │ headers: Struct(
+     2 │     timestamp: Foo
+     ? │                ^^^</code></pre><p><strong>Parameters</strong><ul><li><code>unparsed</code> [<code>str</code>]: Unexpected string that raised the exception.</ul><p><strong>Returns</strong><ul><li>[<code>str</code>]: Clean and helpful error message, helpfully.</ul><p><strong>Notes</strong><ul><li>In most cases this method will look for the first occurrence of the string that raised the exception; and it might not be the <em>actual</em> line that did so.<li>This method is absolutely useless and could be removed.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def format_error(self, unparsed: str) -&gt; str:
+        """Format the message printed in the exception when an issue occurs.
+
+        ```text
+        Tripped on line 2
+
+             1 │ headers: Struct(
+             2 │     timestamp: Foo
+             ? │                ^^^
+        ```
+
+        Parameters
+        ----------
+        unparsed : str
+            Unexpected string that raised the exception.
+
+        Returns
+        -------
+        : str
+            Clean and helpful error message, helpfully.
+
+        Notes
+        -----
+        * In most cases this method will look for the first occurrence of the string
+          that raised the exception; and it might not be the _actual_ line that did so.
+        * This method is absolutely useless and could be removed.
+
+        """
+        # start/end of the issue
+        issue_start = self.source.index(unparsed)
+        issue_end = (
+            issue_start + m.start()
+            if (m := re.search(r"[()\[\]{}&lt;&gt;\n]", self.source[issue_start:]))
+            is not None
+            else len(self.source)
+        )
+
+        # start/end of the line
+        line_start = (
+            issue_start - self.source[:issue_start][::-1].index("\n") + 1
+            if issue_start and "\n" in self.source[:issue_start]
+            else 1
+        )
+        line_end = (
+            issue_end + self.source[issue_end:].index("\n")
+            if "\n" in self.source[issue_end:]
+            else len(self.source)
+        )
+
+        # line number at which the issue happens
+        line_number = self.source[:issue_start].count("\n") + 1
+
+        # captain obvious
+        msg = f"Tripped on line {line_number}\n\n"
+        for i, line in enumerate(self.source[:line_end].split("\n")):
+            msg += f"   {i + 1:-3d} │ {line}\n"
+        msg += "     ? │ "
+        msg += " " * (issue_start - line_start + 1)
+        msg += "^" * (issue_end - issue_start)
+        msg += "\n"
+
+        return msg</code></pre></details><h5 id=unpackschemaparserparse_renamed_attr_dtype><code>unpack.SchemaParser.parse_renamed_attr_dtype</code></h5><pre class=highlight><code class=language-python>parse_renamed_attr_dtype(
+    struct: pl.Struct,
+    name: str,
+    renamed_to: str,
+    dtype: str,
+) -&gt; pl.Struct:</code></pre><p>Parse and register an attribute, its new name, and its associated datatype.<p><strong>Parameters</strong><ul><li><code>struct</code> [<code>polars.Struct</code>]: Current state of the <code>Polars</code> <code>Struct</code>.<li><code>name</code> [<code>str</code>]: Current attribute name.<li><code>renamed_to</code> [<code>str</code>]: New name for the attribute.<li><code>dtype</code> [<code>str</code>]: Expected <code>Polars</code> datatype for this attribute.</ul><p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: Updated <code>Polars</code> <code>Struct</code> including the latest parsed addition.</ul><p><strong>Raises</strong><ul><li>[<code>DuplicateColumnError</code>]: When a column is encountered more than once in the schema.<li>[<code>UnknownDataTypeError</code>]: When an unknown/unsupported datatype is encountered.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def parse_renamed_attr_dtype(
+        self,
+        struct: pl.Struct,
+        name: str,
+        renamed_to: str,
+        dtype: str,
+    ) -&gt; pl.Struct:
+        """Parse and register an attribute, its new name, and its associated datatype.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        name : str
+            Current attribute name.
+        renamed_to : str
+            New name for the attribute.
+        dtype : str
+            Expected `Polars` datatype for this attribute.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : DuplicateColumnError
+            When a column is encountered more than once in the schema.
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+        field = pl.Field(name, POLARS_DATATYPES[dtype])
+
+        # add to the lists
+        if dtype not in ("array", "list", "struct"):
+            if renamed_to not in self.columns:
+                self.columns.append(renamed_to)
+                self.dtypes.append(POLARS_DATATYPES[dtype])
+
+                # json path and associated column name
+                path = (
+                    self.separator.join(self.record["path"])
+                    .replace("[]", "")
+                    .replace(self.separator * 2, self.separator)
+                    .rstrip(self.separator)
+                )
+                self.json_paths[
+                    f"{path}{self.separator}{name}".lstrip(self.separator)
+                ] = renamed_to
+            else:
+                raise DuplicateColumnError(self.format_error(renamed_to))
+
+        # renaming part of the json path is not supported (nor needed)
+        else:
+            raise PathRenamingError(renamed_to)
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if self.record["parents"]:
+            self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct</code></pre></details><h5 id=unpackschemaparserparse_attr_dtype><code>unpack.SchemaParser.parse_attr_dtype</code></h5><pre class=highlight><code class=language-python>parse_attr_dtype(struct: pl.Struct, name: str, dtype: str) -&gt; pl.Struct:</code></pre><p>Parse and register an attribute and its associated datatype.<p><strong>Parameters</strong><ul><li><code>struct</code> [<code>polars.Struct</code>]: Current state of the <code>Polars</code> <code>Struct</code>.<li><code>name</code> [<code>str</code>]: Attribute name.<li><code>dtype</code> [<code>str</code>]: Expected <code>Polars</code> datatype for this attribute.</ul><p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: Updated <code>Polars</code> <code>Struct</code> including the latest parsed addition.</ul><p><strong>Raises</strong><ul><li>[<code>DuplicateColumnError</code>]: When a column is encountered more than once in the schema.<li>[<code>UnknownDataTypeError</code>]: When an unknown/unsupported datatype is encountered.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def parse_attr_dtype(self, struct: pl.Struct, name: str, dtype: str) -&gt; pl.Struct:
+        """Parse and register an attribute and its associated datatype.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        name : str
+            Attribute name.
+        dtype : str
+            Expected `Polars` datatype for this attribute.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : DuplicateColumnError
+            When a column is encountered more than once in the schema.
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+        field = pl.Field(name, POLARS_DATATYPES[dtype])
+
+        # add to the lists
+        if dtype not in ("array", "list", "struct"):
+            if name not in self.columns:
+                self.columns.append(name)
+                self.dtypes.append(POLARS_DATATYPES[dtype])
+
+                # json path and associated column name
+                path = (
+                    self.separator.join(self.record["path"])
+                    .replace("[]", "")
+                    .replace(self.separator * 2, self.separator)
+                    .rstrip(self.separator)
+                )
+                self.json_paths[
+                    f"{path}{self.separator}{name}".lstrip(self.separator)
+                ] = name
+            else:
+                raise DuplicateColumnError(self.format_error(name))
+
+        # add the parent to the current path
+        else:
+            self.record["path"].append(name)
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if dtype in ("list", "struct"):
+            self.record["parents"].append((name, dtype))
+        elif self.record["parents"]:
+            self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct</code></pre></details><h5 id=unpackschemaparserparse_lone_dtype><code>unpack.SchemaParser.parse_lone_dtype</code></h5><pre class=highlight><code class=language-python>parse_lone_dtype(struct: pl.Struct, dtype: str) -&gt; pl.Struct:</code></pre><p>Parse and register a standalone datatype (found within a list for instance).<p><strong>Parameters</strong><ul><li><code>struct</code> [<code>polars.Struct</code>]: Current state of the <code>Polars</code> <code>Struct</code>.<li><code>dtype</code> [<code>str</code>]: Expected <code>Polars</code> datatype.</ul><p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: Updated <code>Polars</code> <code>Struct</code> including the latest parsed addition.</ul><p><strong>Raises</strong><ul><li>[<code>UnknownDataTypeError</code>]: When an unknown/unsupported datatype is encountered.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def parse_lone_dtype(self, struct: pl.Struct, dtype: str) -&gt; pl.Struct:
+        """Parse and register a standalone datatype (found within a list for instance).
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+        dtype : str
+            Expected `Polars` datatype.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        Raises
+        ------
+        : UnknownDataTypeError
+            When an unknown/unsupported datatype is encountered.
+
+        """
+        # sanity check
+        if dtype.lower() not in POLARS_DATATYPES:
+            raise UnknownDataTypeError(self.format_error(dtype))
+
+        dtype = dtype.lower()
+
+        # add to the path
+        if dtype in ("list", "struct"):
+            self.record["path"].append("[]")
+
+        # keep track of the nested object encountered, or if non-nested add it to the
+        # the current nested object, or the root struct
+        if dtype in ("list", "struct"):
+            self.record["parents"].append(("", dtype))
+        elif self.record["parents"]:
+            self.record["lists"].append(POLARS_DATATYPES[dtype])
+        else:
+            struct.append(pl.Field("", POLARS_DATATYPES[dtype]))
+
+        return struct</code></pre></details><h5 id=unpackschemaparserparse_opening_delimiter><code>unpack.SchemaParser.parse_opening_delimiter</code></h5><pre class=highlight><code class=language-python>parse_opening_delimiter() -&gt; None:</code></pre><p>Parse and register the opening of a nested structure.<details><summary>source</summary><pre class=highlight><code class=language-python>def parse_opening_delimiter(self) -&gt; None:
+        """Parse and register the opening of a nested structure."""
+        # create a new list to register new fields
+        if self.record["parents"][-1][1] == "struct":
+            self.record["structs"].append([])</code></pre></details><h5 id=unpackschemaparserparse_closing_delimiter><code>unpack.SchemaParser.parse_closing_delimiter</code></h5><pre class=highlight><code class=language-python>parse_closing_delimiter(struct: pl.Struct) -&gt; pl.Struct:</code></pre><p>Parse and register the closing of a nested structure.<p><strong>Parameters</strong><ul><li><code>struct</code> [<code>polars.Struct</code>]: Current state of the <code>Polars</code> <code>Struct</code>.</ul><p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: Updated <code>Polars</code> <code>Struct</code> including the latest parsed addition.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def parse_closing_delimiter(self, struct: pl.Struct) -&gt; pl.Struct:
+        """Parse and register the closing of a nested structure.
+
+        Parameters
+        ----------
+        struct : polars.Struct
+            Current state of the `Polars` `Struct`.
+
+        Returns
+        -------
+        : polars.Struct
+            Updated `Polars` `Struct` including the latest parsed addition.
+
+        """
+        name, dtype = self.record["parents"].pop()
+
+        # remove a parent from the current path
+        if self.record["path"]:
+            self.record["path"].pop()
+
+        # list
+        if dtype == "list":
+            f = self.record["lists"].pop()
+            d = f.dtype if hasattr(f, "dtype") else f
+
+            # list within struct or list within list
+            field = pl.Field(name, pl.List(d)) if name else pl.List(d)
+
+        # struct
+        else:
+            field = pl.Field(name, pl.Struct(self.record["structs"].pop()))
+
+        # add the attribute to the current nested object, or the root struct
+        if self.record["parents"]:
+            if self.record["parents"][-1][1] == "list":
+                self.record["lists"].append(field)
+            else:
+                self.record["structs"][-1].append(field)
+        else:
+            struct.append(field)
+
+        return struct</code></pre></details><h5 id=unpackschemaparserto_struct><code>unpack.SchemaParser.to_struct</code></h5><pre class=highlight><code class=language-python>to_struct() -&gt; pl.Struct:</code></pre><p>Parse the plain text schema into a <code>Polars</code> <code>Struct</code>.<p>We expect something as follows:<pre class=highlight><code class=language-text>attribute: String
+nested: Struct(
+    foo: Float32
+    bar=bax: Int16
+    vector: List[UInt8]
+)</code></pre><p>to translate into a <code>Polars</code> native <code>Struct</code> object:<pre class=highlight><code class=language-python>polars.Struct([
+    polars.Field("attribute", polars.String),
+    polars.Struct([
+        polars.Field("foo", polars.Float32),
+        polars.Field("bar", polars.Int16),
+        polars.Field("vector", polars.List(polars.UInt8))
+    ])
+])</code></pre><p>The following patterns (recognised via regular expressions) are supported:<ul><li><code>([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)</code> for an attribute name, an equal sign (<code>=</code>), a new name for the attribute, a column (<code>:</code>) and a datatype.<li><code>([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)</code> for an attribute name, a column (<code>:</code>) and a datatype; for instance <code>attribute: String</code> in the example above.<li><code>([A-Za-z0-9]+)</code> for a lone datatype; for instance the inner content of the <code>List()</code> in the example above. Keep in mind this datatype could be a complex structure as much as a canonical datatype.<li><code>[(\[{&lt;]</code> and its <code>[)\]}&gt;]</code> counterpart for opening and closing of nested datatypes. Any of these characters can be used to open or close nested structures; mixing also allowed, for the better or the worse.</ul><p>Note attribute names and datatypes must not contain spaces and only include alphanumerical or underscore (<code>_</code>) characters.<p>Indentation and trailing commas are ignored. The source is parsed until the end of the file is reached or a <code>SchemaParsingError</code> exception is raised.<p><strong>Returns</strong><ul><li>[<code>polars.Struct</code>]: Plain text schema parsed as a <code>Polars</code> <code>Struct</code>.</ul><p><strong>Raises</strong><ul><li>[<code>SchemaParsingError</code>]: When unexpected content is encountered and cannot be parsed.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def to_struct(self) -&gt; pl.Struct:
+        r"""Parse the plain text schema into a `Polars` `Struct`.
+
+        We expect something as follows:
+
+        ```text
+        attribute: String
+        nested: Struct(
+            foo: Float32
+            bar=bax: Int16
+            vector: List[UInt8]
+        )
+        ```
+
+        to translate into a `Polars` native `Struct` object:
+
+        ```python
+        polars.Struct([
+            polars.Field("attribute", polars.String),
+            polars.Struct([
+                polars.Field("foo", polars.Float32),
+                polars.Field("bar", polars.Int16),
+                polars.Field("vector", polars.List(polars.UInt8))
+            ])
+        ])
+        ```
+
+        The following patterns (recognised via regular expressions) are supported:
+
+        * `([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute
+          name, an equal sign (`=`), a new name for the attribute, a column (`:`) and a
+          datatype.
+        * `([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)` for an attribute name, a column (`:`)
+          and a datatype; for instance `attribute: String` in the example above.
+        * `([A-Za-z0-9]+)` for a lone datatype; for instance the inner content of the
+          `List()` in the example above. Keep in mind this datatype could be a complex
+          structure as much as a canonical datatype.
+        * `[(\[{&lt;]` and its `[)\]}&gt;]` counterpart for opening and closing of nested
+          datatypes. Any of these characters can be used to open or close nested
+          structures; mixing also allowed, for the better or the worse.
+
+        Note attribute names and datatypes must not contain spaces and only include
+        alphanumerical or underscore (`_`) characters.
+
+        Indentation and trailing commas are ignored. The source is parsed until the end
+        of the file is reached or a `SchemaParsingError` exception is raised.
+
+        Returns
+        -------
+        : polars.Struct
+            Plain text schema parsed as a `Polars` `Struct`.
+
+        Raises
+        ------
+        : SchemaParsingError
+            When unexpected content is encountered and cannot be parsed.
+
+        """
+        s = self.source
+        struct: list[pl.Datatype] = []
+
+        # bookkeeping
+        self.record: dict = {"lists": [], "parents": [], "path": [], "structs": []}
+
+        # continue until everything is parsed
+        while s:
+            if (
+                m := re.match(
+                    r"([A-Za-z0-9_]+)\s*=\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)",
+                    s,
+                )
+            ) is not None:
+                struct = self.parse_renamed_attr_dtype(
+                    struct,
+                    m.group(1),
+                    m.group(2),
+                    m.group(3),
+                )
+            elif (
+                m := re.match(r"([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9]+)", s)
+            ) is not None:
+                struct = self.parse_attr_dtype(struct, m.group(1), m.group(2))
+            elif (m := re.match(r"([A-Za-z0-9]+)", s)) is not None:
+                struct = self.parse_lone_dtype(struct, m.group(1))
+            elif (m := re.match(r"[(\[{&lt;]", s)) is not None:
+                self.parse_opening_delimiter()
+            elif (m := re.match(r"[)\]}&gt;]", s)) is not None:
+                struct = self.parse_closing_delimiter(struct)
+            elif (m := re.match(r"[,\n\s]+", s)) is not None:
+                pass
+            else:
+                raise SchemaParsingError(self.format_error(s))
+
+            # clean up the current match
+            s = s.replace(m.group(0), "", 1)
+
+        # clean up in case someone checks the object attributes
+        delattr(self, "record")
+
+        # build the final object
+        self.struct = pl.Struct(struct)
+
+        return self.struct</code></pre></details><h3 id=unpackduplicatecolumnerror><code>unpack.DuplicateColumnError</code></h3><p>When a column is encountered more than once in the schema.<details><summary>source</summary><pre class=highlight><code class=language-python>class DuplicateColumnError(Exception):
+    """When a column is encountered more than once in the schema."""</code></pre></details><h4 id=constructor_1>Constructor</h4><pre class=highlight><code class=language-python>DuplicateColumnError()</code></pre><h3 id=unpackpathrenamingerror><code>unpack.PathRenamingError</code></h3><p>When a parent (in a JSON path sense) is being renamed.<details><summary>source</summary><pre class=highlight><code class=language-python>class PathRenamingError(Exception):
+    """When a parent (in a JSON path sense) is being renamed."""</code></pre></details><h4 id=constructor_2>Constructor</h4><pre class=highlight><code class=language-python>PathRenamingError()</code></pre><h3 id=unpackschemaparsingerror><code>unpack.SchemaParsingError</code></h3><p>When unexpected content is encountered and cannot be parsed.<details><summary>source</summary><pre class=highlight><code class=language-python>class SchemaParsingError(Exception):
+    """When unexpected content is encountered and cannot be parsed."""</code></pre></details><h4 id=constructor_3>Constructor</h4><pre class=highlight><code class=language-python>SchemaParsingError()</code></pre><h3 id=unpackunknowndatatypeerror><code>unpack.UnknownDataTypeError</code></h3><p>When an unknown/unsupported datatype is encountered.<details><summary>source</summary><pre class=highlight><code class=language-python>class UnknownDataTypeError(Exception):
+    """When an unknown/unsupported datatype is encountered."""</code></pre></details><h4 id=constructor_4>Constructor</h4><pre class=highlight><code class=language-python>UnknownDataTypeError()</code></pre><h3 id=unpackunpackframe><code>unpack.UnpackFrame</code></h3><p>Register a new <code>df.json.unpack()</code> method onto <code>Polars</code> objects.<p><strong>Decoration</strong> via <code>@pl.api.register_dataframe_namespace()</code>, <code>@pl.api.register_lazyframe_namespace()</code>.<p><strong>Methods</strong><ul><li><a href=#unpackunpackframeunpack><code>unpack()</code></a>: Unpack JSON content into a <code>DataFrame</code> (or <code>LazyFrame</code>) given a schema.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>class UnpackFrame:
+    """Register a new `df.json.unpack()` method onto `Polars` objects."""
+
+    def __init__(self, df: pl.DataFrame | pl.LazyFrame, separator: str = ".") -&gt; None:
+        """Instantiate the object.
+
+        Parameters
+        ----------
+        df : pl.DataFrame | pl.LazyFrame
+            `Polars` `DataFrame` or `LazyFrame` object to unpack.
+        separator : str
+            JSON path separator to use when building the full JSON path.
+
+        """
+        self._df: pl.DataFrame | pl.LazyFrame = df
+        self.separator: str = separator
+
+    def unpack(
+        self,
+        dtype: pl.DataType,
+        json_path: str = "",
+        column: str | None = None,
+    ) -&gt; pl.DataFrame | pl.LazyFrame:
+        """Unpack JSON content into a `DataFrame` (or `LazyFrame`) given a schema.
+
+        Parameters
+        ----------
+        dtype : polars.DataType
+            Datatype of the current object (`polars.Array`, `polars.List` or
+            `polars.Struct`).
+        json_path : str
+            Full JSON path (_aka_ breadcrumbs) to the current field.
+        column : str | None
+            Column to apply the unpacking on; defaults to `None`. This is used when the
+            current object has children but no field name; this is the case for
+            convoluted `polars.List` within a `polars.List` for instance.
+
+        Returns
+        -------
+        : polars.DataFrame | polars.LazyFrame
+            Updated [unpacked] `Polars` `DataFrame` (or `LazyFrame`) object.
+
+        Notes
+        -----
+        * The `polars.Array` is considered the [obsolete] ancestor of `polars.List` and
+          expected to behave identically.
+        * Unpacked columns will be renamed as their full respective JSON paths to avoid
+          potential identical names.
+
+        """
+        # if we are dealing with a nesting column
+        if column is not None:
+            if dtype in (pl.Array, pl.List):
+                # rename column to json path
+                jp = f"{json_path}{self.separator}{column}".lstrip(self.separator)
+                if column in self._df.columns:
+                    self._df = self._df.rename({column: jp})
+                # unpack
+                self._df = self._df.explode(jp).json.unpack(dtype.inner, jp, jp)
+            elif dtype == pl.Struct:
+                self._df = self._df.unnest(column).json.unpack(dtype, json_path)
+
+        # unpack nested children columns when encountered
+        elif hasattr(dtype, "fields"):
+            for f in dtype.fields:
+                # rename column to json path
+                jp = f"{json_path}{self.separator}{f.name}".lstrip(self.separator)
+                if f.name in self._df.columns:
+                    self._df = self._df.rename({f.name: jp})
+                # unpack
+                if type(f.dtype) in (pl.Array, pl.List):
+                    self._df = self._df.explode(jp).json.unpack(f.dtype.inner, jp, jp)
+                elif type(f.dtype) == pl.Struct:
+                    self._df = self._df.unnest(jp).json.unpack(f.dtype, jp)
+
+        return self._df</code></pre></details><h4 id=constructor_5>Constructor</h4><pre class=highlight><code class=language-python>UnpackFrame(df: pl.DataFrame | pl.LazyFrame, separator: str = ".")</code></pre><p>Instantiate the object.<p><strong>Parameters</strong><ul><li><code>df</code> [<code>pl.DataFrame | pl.LazyFrame</code>]: <code>Polars</code> <code>DataFrame</code> or <code>LazyFrame</code> object to unpack.<li><code>separator</code> [<code>str</code>]: JSON path separator to use when building the full JSON path.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def __init__(self, df: pl.DataFrame | pl.LazyFrame, separator: str = ".") -&gt; None:
+        """Instantiate the object.
+
+        Parameters
+        ----------
+        df : pl.DataFrame | pl.LazyFrame
+            `Polars` `DataFrame` or `LazyFrame` object to unpack.
+        separator : str
+            JSON path separator to use when building the full JSON path.
+
+        """
+        self._df: pl.DataFrame | pl.LazyFrame = df
+        self.separator: str = separator</code></pre></details><h4 id=methods_1>Methods</h4><h5 id=unpackunpackframeunpack><code>unpack.UnpackFrame.unpack</code></h5><pre class=highlight><code class=language-python>unpack(
+    dtype: pl.DataType,
+    json_path: str = "",
+    column: str | None = None,
+) -&gt; pl.DataFrame | pl.LazyFrame:</code></pre><p>Unpack JSON content into a <code>DataFrame</code> (or <code>LazyFrame</code>) given a schema.<p><strong>Parameters</strong><ul><li><code>dtype</code> [<code>polars.DataType</code>]: Datatype of the current object (<code>polars.Array</code>, <code>polars.List</code> or <code>polars.Struct</code>).<li><code>json_path</code> [<code>str</code>]: Full JSON path (<em>aka</em> breadcrumbs) to the current field.<li><code>column</code> [<code>str | None</code>]: Column to apply the unpacking on; defaults to <code>None</code>. This is used when the current object has children but no field name; this is the case for convoluted <code>polars.List</code> within a <code>polars.List</code> for instance.</ul><p><strong>Returns</strong><ul><li>[<code>polars.DataFrame | polars.LazyFrame</code>]: Updated [unpacked] <code>Polars</code> <code>DataFrame</code> (or <code>LazyFrame</code>) object.</ul><p><strong>Notes</strong><ul><li>The <code>polars.Array</code> is considered the [obsolete] ancestor of <code>polars.List</code> and expected to behave identically.<li>Unpacked columns will be renamed as their full respective JSON paths to avoid potential identical names.</ul><details><summary>source</summary><pre class=highlight><code class=language-python>def unpack(
+        self,
+        dtype: pl.DataType,
+        json_path: str = "",
+        column: str | None = None,
+    ) -&gt; pl.DataFrame | pl.LazyFrame:
+        """Unpack JSON content into a `DataFrame` (or `LazyFrame`) given a schema.
+
+        Parameters
+        ----------
+        dtype : polars.DataType
+            Datatype of the current object (`polars.Array`, `polars.List` or
+            `polars.Struct`).
+        json_path : str
+            Full JSON path (_aka_ breadcrumbs) to the current field.
+        column : str | None
+            Column to apply the unpacking on; defaults to `None`. This is used when the
+            current object has children but no field name; this is the case for
+            convoluted `polars.List` within a `polars.List` for instance.
+
+        Returns
+        -------
+        : polars.DataFrame | polars.LazyFrame
+            Updated [unpacked] `Polars` `DataFrame` (or `LazyFrame`) object.
+
+        Notes
+        -----
+        * The `polars.Array` is considered the [obsolete] ancestor of `polars.List` and
+          expected to behave identically.
+        * Unpacked columns will be renamed as their full respective JSON paths to avoid
+          potential identical names.
+
+        """
+        # if we are dealing with a nesting column
+        if column is not None:
+            if dtype in (pl.Array, pl.List):
+                # rename column to json path
+                jp = f"{json_path}{self.separator}{column}".lstrip(self.separator)
+                if column in self._df.columns:
+                    self._df = self._df.rename({column: jp})
+                # unpack
+                self._df = self._df.explode(jp).json.unpack(dtype.inner, jp, jp)
+            elif dtype == pl.Struct:
+                self._df = self._df.unnest(column).json.unpack(dtype, json_path)
+
+        # unpack nested children columns when encountered
+        elif hasattr(dtype, "fields"):
+            for f in dtype.fields:
+                # rename column to json path
+                jp = f"{json_path}{self.separator}{f.name}".lstrip(self.separator)
+                if f.name in self._df.columns:
+                    self._df = self._df.rename({f.name: jp})
+                # unpack
+                if type(f.dtype) in (pl.Array, pl.List):
+                    self._df = self._df.explode(jp).json.unpack(f.dtype.inner, jp, jp)
+                elif type(f.dtype) == pl.Struct:
+                    self._df = self._df.unnest(jp).json.unpack(f.dtype, jp)
+
+        return self._df</code></pre></details></div><span class=spacer></span><footer><a id=prev></a> <span class=spacer></span> <a id=next></a></footer></article></main>
